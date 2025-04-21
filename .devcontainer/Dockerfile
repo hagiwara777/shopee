@@ -1,18 +1,26 @@
-# ベースに Python 3.12 + Node.js 18 LTS が入ったイメージを利用
+# ──────────────────────────────────────
+# 1. ベースイメージを指定
+#    → ここまでで「Python 3.12 が使える状態」です
 FROM mcr.microsoft.com/vscode/devcontainers/python:3.12-bullseye
 
-# 必要なツール類を追加インストール（例：git, curl）
+# ──────────────────────────────────────
+# 2. 追加ツールと Node.js の元情報をダウンロード
+#    a) システムのソフト一覧を最新にする
+#    b) curl という“ファイルをダウンロードする道具”を入れる
+#    c) NodeSource という配布サイトから
+#       「Node.js 22.x を入れていいよ」という設定を読み込む
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends git curl \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+  && apt-get install -y --no-install-recommends git curl \
+  && curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
 
-# 作業ディレクトリ
+# ──────────────────────────────────────
+# 3. いよいよ Node.js と npm をインストール
+#    → Node.js（プログラム本体）と npm（ライブラリ管理ツール）が入る
+RUN apt-get install -y --no-install-recommends nodejs \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
+
+# ──────────────────────────────────────
+# 4. 作業フォルダとユーザー切り替え
 WORKDIR /workspace
-
-# Node.js 18 を追加（Dev Container イメージには入っていない場合）
-ARG INSTALL_NODE="true"
-RUN if [ "$INSTALL_NODE" = "true" ]; then su vscode -c "npm install -g npm@9"; fi
-
-# デフォルトユーザーを vscode ユーザーに
 USER vscode
