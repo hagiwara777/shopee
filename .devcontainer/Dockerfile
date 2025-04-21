@@ -24,3 +24,9 @@ RUN apt-get install -y --no-install-recommends nodejs \
 # 4. 作業フォルダとユーザー切り替え
 WORKDIR /workspace
 USER vscode
+
+# Dockerfile の適切な箇所に追加
+COPY .devcontainer/id_ed25519 /home/vscode/.ssh/id_ed25519
+RUN chown vscode:vscode /home/vscode/.ssh/id_ed25519 \
+    && chmod 600 /home/vscode/.ssh/id_ed25519
+USER vscode
