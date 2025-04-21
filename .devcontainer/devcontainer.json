@@ -1,24 +1,23 @@
 {
-    "name": "Shopee Dev Container",
-    "build": {
-      "dockerfile": "Dockerfile",
-      "args": {
-        "INSTALL_NODE": "true"
-      }
-    },
-    "extensions": [
-      "ms-python.python",
-      "ms-python.vscode-pylance",
-      "dbaeumer.vscode-eslint",
-      "esbenp.prettier-vscode",
-      "ms-vscode.vscode-node-azure-pack"
-    ],
-    "postCreateCommand": "pip install -r requirements.txt && npm install",
-    "forwardPorts": [3000, 8000],
-    "remoteUser": "vscode",
-    "runArgs": [
-      "--memory=4g",
-      "--cpus=2"
-    ]
-  }
-  
+  "name": "Shopee Dev Container",
+  "build": { 
+    "dockerfile": "Dockerfile", 
+    "args": { "INSTALL_NODE": "true" } 
+  },
+
+  // SSHエージェント関連の設定を削除
+  // "mounts" と "remoteEnv" の行を削除
+
+  "extensions": [
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "ms-vscode.vscode-node-azure-pack"
+  ],
+
+  "postCreateCommand": "pip install -r requirements.txt && npm install",
+  "forwardPorts": [3000, 8000],
+  "remoteUser": "vscode",
+  "runArgs": ["--memory=4g", "--cpus=2"]
+}

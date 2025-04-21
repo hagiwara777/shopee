@@ -6,11 +6,11 @@ FROM mcr.microsoft.com/vscode/devcontainers/python:3.12-bullseye
 # ──────────────────────────────────────
 # 2. 追加ツールと Node.js の元情報をダウンロード
 #    a) システムのソフト一覧を最新にする
-#    b) curl という“ファイルをダウンロードする道具”を入れる
+#    b) curl という"ファイルをダウンロードする道具"を入れる
 #    c) NodeSource という配布サイトから
 #       「Node.js 22.x を入れていいよ」という設定を読み込む
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends git curl \
+  && apt-get install -y --no-install-recommends git curl openssh-client \
   && curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
 
 # ──────────────────────────────────────
@@ -23,10 +23,4 @@ RUN apt-get install -y --no-install-recommends nodejs \
 # ──────────────────────────────────────
 # 4. 作業フォルダとユーザー切り替え
 WORKDIR /workspace
-USER vscode
-
-# Dockerfile の適切な箇所に追加
-COPY .devcontainer/id_ed25519 /home/vscode/.ssh/id_ed25519
-RUN chown vscode:vscode /home/vscode/.ssh/id_ed25519 \
-    && chmod 600 /home/vscode/.ssh/id_ed25519
 USER vscode
