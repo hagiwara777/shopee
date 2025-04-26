@@ -1,12 +1,21 @@
+// .devcontainer/devcontainer.json (APIキー設定追加版)
 {
   "name": "Shopee Dev Container",
-  "build": { 
-    "dockerfile": "Dockerfile", 
-    "args": { "INSTALL_NODE": "true" } 
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": { "INSTALL_NODE": "true" }
   },
 
-  // SSHエージェント関連の設定を削除
-  // "mounts" と "remoteEnv" の行を削除
+  // SSHエージェント関連の設定を削除 (削除済み)
+  // "mounts" と "remoteEnv" の行を削除 (削除済み)
+
+  // ↓↓↓ ここから追加 ↓↓↓
+  "containerEnv": {
+    // 重要： "ここにあなたの取得したGemini APIキーを貼り付け" の部分を、
+    //       実際に取得したご自身のAPIキーに置き換えてください。
+    "GEMINI_API_KEY": "AIzaSyD-Ouqvsa11Z2Rg18EHGHEVS6JFsqixRCo"
+  },
+  // ↑↑↑ ここまで追加 ↑↑↑
 
   "extensions": [
     "ms-python.python",
@@ -16,8 +25,16 @@
     "ms-vscode.vscode-node-azure-pack"
   ],
 
-  "postCreateCommand": "pip install -r requirements.txt && npm install",
-  "forwardPorts": [3000, 8000],
+  // postCreateCommand は requirements.txt が空だとエラーになる可能性があるため、
+  // エラーを無視するように調整（または requirements.txt が確実に存在するようにする）
+  // 一例として、ファイルが存在しない場合のエラーを無視する書き方:
+  "postCreateCommand": "(test -f requirements.txt && pip install --user -r requirements.txt || echo 'requirements.txt not found, skipping pip install') && (test -f package.json && npm install || echo 'package.json not found, skipping npm install')",
+
+  "forwardPorts": [
+      3000, // Node.js/Next.js用 (もし使う場合)
+      8000, // Python Webフレームワーク用 (もし使う場合)
+      8501  // Streamlit デフォルトポートを追加
+    ],
   "remoteUser": "vscode",
   "runArgs": ["--memory=4g", "--cpus=2"]
 }

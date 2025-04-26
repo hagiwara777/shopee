@@ -1,0 +1,5 @@
+streamlit
+pandas
+openpyxl # Excelファイルの読み書きに必要
+xlsxwriter # Excelファイルへの書き込み(ハイライト付き保存)に必
+google-generativeai
