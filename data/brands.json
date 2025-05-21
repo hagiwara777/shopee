@@ -1,594 +1,948 @@
 {
-  "アクセーヌ": "ACSEINE",
-  "ACSEINE": "ACSEINE",
-  "あくせーぬ": "ACSEINE",
-  "アディクション": "ADDICTION",
-  "ADDICTION": "ADDICTION",
-  "あでぃくしょん": "ADDICTION",
-  "エアリン": "AERIN",
-  "AERIN": "AERIN",
-  "えありん": "AERIN",
-  "アンプリチュード": "Amplitude",
-  "Amplitude": "Amplitude",
-  "あんぷりちゅーど": "Amplitude",
-  "アナスイ": "ANNA SUI",
-  "ANNA SUI": "ANNA SUI",
-  "あなすい": "ANNA SUI",
-  "アクア・アクア": "AQUA AQUA",
-  "AQUA AQUA": "AQUA AQUA",
-  "アクアアクア": "AQUA AQUA",
-  "あくああくあ": "AQUA AQUA",
-  "アラミス": "aramis",
-  "aramis": "aramis",
-  "あらみす": "aramis",
-  "アスタリフト": "ASTALIFT",
-  "ASTALIFT": "ASTALIFT",
-  "あすたりふと": "ASTALIFT",
-  "アユーラ": "AYURA",
-  "AYURA": "AYURA",
-  "あゆーら": "AYURA",
-  "アピュー": "A'pieu",
-  "A'pieu": "A'pieu",
-  "あぴゅー": "A'pieu",
-  "ビーアイドル": "B IDOL",
-  "B IDOL": "B IDOL",
-  "びーあいどる": "B IDOL",
-  "B.A": "B.A",
-  "b.a": "B.A",
-  "ビーエー": "B.A",
-  "びーえー": "B.A",
-  "ベイビーミー": "BABYMEE",
-  "BABYMEE": "BABYMEE",
-  "べいびーみー": "BABYMEE",
-  "バラカ": "BARAKA",
-  "BARAKA": "BARAKA",
-  "ばらか": "BARAKA",
-  "ベアミネラル": "bareMinerals",
-  "bareMinerals": "bareMinerals",
-  "べあみねらる": "bareMinerals",
-  "ベネフィーク": "Benefique",
-  "Benefique": "Benefique",
-  "べねふぃーく": "Benefique",
-  "ブレンドベリー": "BLEND BERRY",
-  "BLEND BERRY": "BLEND BERRY",
-  "ぶれんどべりー": "BLEND BERRY",
-  "ボビイ ブラウン": "BOBBI BROWN",
-  "BOBBI BROWN": "BOBBI BROWN",
-  "ボビイブラウン": "BOBBI BROWN",
-  "ぼびいぶらうん": "BOBBI BROWN",
-  "ブリリアージュ": "BRILLIAGE",
-  "BRILLIAGE": "BRILLIAGE",
-  "ぶりりあーじゅ": "BRILLIAGE",
-  "バーバリー": "BURBERRY",
-  "BURBERRY": "BURBERRY",
-  "ばーばりー": "BURBERRY",
-  "カナデル": "CANADEL",
-  "CANADEL": "CANADEL",
-  "かなでる": "CANADEL",
-  "セルヴォーク": "Celvoke",
-  "Celvoke": "Celvoke",
-  "セルボーク": "Celvoke",
-  "せるヴぉーく": "Celvoke",
-  "せるぼーく": "Celvoke",
-  "チャコット": "Chacott",
-  "Chacott": "Chacott",
-  "ちゃこっと": "Chacott",
-  "シャンテカイユ": "Chantecaille",
-  "Chantecaille": "Chantecaille",
-  "しゃんてかいう": "Chantecaille",
-  "キッカ": "CHICCA",
-  "CHICCA": "CHICCA",
-  "きっか": "CHICCA",
-  "クリスチャン ルブタン": "Christian Louboutin",
-  "Christian Louboutin": "Christian Louboutin",
-  "クリスチャンルブタン": "Christian Louboutin",
-  "くりすちゃんるぶたん": "Christian Louboutin",
-  "シアテ ロンドン": "Ciaté LONDON",
-  "Ciaté LONDON": "Ciaté LONDON",
-  "シアテロンドン": "Ciaté LONDON",
-  "しあてろんどん": "Ciaté LONDON",
-  "クラランス": "CLARINS",
-  "CLARINS": "CLARINS",
-  "くららんす": "CLARINS",
-  "クリーン": "CLEAN",
-  "CLEAN": "CLEAN",
-  "くりーん": "CLEAN",
-  "クリニーク": "CLINIQUE",
-  "CLINIQUE": "CLINIQUE",
-  "くりにーく": "CLINIQUE",
-  "クリオ": "CLIO",
-  "CLIO": "CLIO",
-  "くりお": "CLIO",
-  "カバーマーク": "COVERMARK",
-  "COVERMARK": "COVERMARK",
-  "かばーまーく": "COVERMARK",
-  "クレージュ": "Courrèges",
-  "Courrèges": "Courrèges",
-  "くれーじゅ": "Courrèges",
-  "クラン バイ モラク": "CRAN BY MOLAK",
-  "CRAN BY MOLAK": "CRAN BY MOLAK",
-  "クランバイモラク": "CRAN BY MOLAK",
-  "くらんばいもらく": "CRAN BY MOLAK",
-  "ディーアップ": "D-UP",
-  "D-UP": "D-UP",
-  "でぃーあっぷ": "D-UP",
-  "ディアダリア": "DEAR DAHLIA",
-  "DEAR DAHLIA": "DEAR DAHLIA",
-  "でぃあだりあ": "DEAR DAHLIA",
-  "ディセンシア": "DECENCIA",
-  "DECENCIA": "DECENCIA",
-  "でぃせんしあ": "DECENCIA",
-  "デボラ リップマン": "deborah lippmann",
-  "deborah lippmann": "deborah lippmann",
-  "デボラリップマン": "deborah lippmann",
-  "でぼらりっぷまん": "deborah lippmann",
-  "デジャヴュ": "dejavu",
-  "dejavu": "dejavu",
-  "でじゃヴゅ": "dejavu",
-  "でじゃびゅ": "dejavu",
-  "ダーマロジカ": "dermalogica",
-  "dermalogica": "dermalogica",
-  "だーまろじか": "dermalogica",
-  "ディオール": "DIOR",
-  "DIOR": "DIOR",
-  "でぃおーる": "DIOR",
-  "dprogram": "d プログラム",
-  "d プログラム": "d プログラム",
-  "dプログラム": "d プログラム",
-  "でぃーぷろぐらむ": "d プログラム",
-  "Dr.Hauschka": "ドクターハウシュカ",
-  "dr.hauschka": "ドクターハウシュカ",
-  "ドクターハウシュカ": "ドクターハウシュカ",
-  "どくたーはうしゅか": "ドクターハウシュカ",
-  "Ducato": "デュカート",
-  "ducato": "デュカート",
-  "デュカート": "デュカート",
-  "でゅかーと": "デュカート",
-  "デュオ": "DUO",
-  "DUO": "DUO",
-  "でゅお": "DUO",
-  "エスティ ローダー": "Estée Lauder",
-  "Estée Lauder": "Estée Lauder",
-  "エスティローダー": "Estée Lauder",
-  "えすてぃろーだー": "Estée Lauder",
-  "エッシー": "essie",
-  "essie": "essie",
-  "えっしー": "essie",
-  "エチュード": "ETUDE",
-  "ETUDE": "ETUDE",
-  "えちゅーど": "ETUDE",
-  "エトヴォス": "ETVOS",
-  "ETVOS": "ETVOS",
-  "エトボス": "ETVOS",
-  "えとヴぉす": "ETVOS",
-  "えとぼす": "ETVOS",
-  "エクスボーテ": "Ex:BEAUTE",
-  "Ex:BEAUTE": "Ex:BEAUTE",
-  "えくすぼーて": "Ex:BEAUTE",
-  "ファシオ": "FASIO",
-  "FASIO": "FASIO",
-  "ふぁしお": "FASIO",
-  "ファミュ": "FEMMUE",
-  "FEMMUE": "FEMMUE",
-  "ふぁみゅ": "FEMMUE",
-  "ファイブイズム バイ スリー": "FIVEISM × THREE",
-  "FIVEISM × THREE": "FIVEISM × THREE",
-  "ファイブイズムバイスリー": "FIVEISM × THREE",
-  "ふぁいぶいずむばいすりー": "FIVEISM × THREE",
-  "フジコ": "Fujiko",
-  "Fujiko": "Fujiko",
-  "ふじこ": "Fujiko",
-  "グッチ": "GUCCI",
-  "GUCCI": "GUCCI",
-  "ぐっち": "GUCCI",
-  "ギャツビー": "GATSBY",
-  "GATSBY": "GATSBY",
-  "ぎゃつびー": "GATSBY",
-  "ジョルジオ アルマーニ": "Giorgio Armani",
-  "Giorgio Armani": "Giorgio Armani",
-  "ジョルジオアルマーニ": "Giorgio Armani",
-  "じょるじおあるまーに": "Giorgio Armani",
-  "ジバンシイ": "Givenchy",
-  "Givenchy": "Givenchy",
-  "じばんしい": "Givenchy",
-  "ゲラン": "GUERLAIN",
-  "GUERLAIN": "GUERLAIN",
-  "げらん": "GUERLAIN",
-  "ハーバー": "HABA",
-  "HABA": "HABA",
-  "はーばー": "HABA",
-  "ヘレナ ルビンスタイン": "HELENA RUBINSTEIN",
-  "HELENA RUBINSTEIN": "HELENA RUBINSTEIN",
-  "ヘレナルビンスタイン": "HELENA RUBINSTEIN",
-  "へれなるびんすたいん": "HELENA RUBINSTEIN",
-  "ヘラ": "HERA",
-  "HERA": "HERA",
-  "へら": "HERA",
-  "ヒカリミライ": "HIKARIMIRAI",
-  "HIKARIMIRAI": "HIKARIMIRAI",
-  "ひかりみらい": "HIKARIMIRAI",
-  "ヒンス": "hince",
-  "hince": "hince",
-  "ひんす": "hince",
-  "ハウス オブ ローゼ": "House of Rose",
-  "House of Rose": "House of Rose",
-  "ハウスオブローゼ": "House of Rose",
-  "はうすおぶろーぜ": "House of Rose",
-  "肌ラボ": "Hada Labo",
-  "Hada Labo": "Hada Labo",
-  "はだらぼ": "Hada Labo",
-  "イハダ": "IHADA",
-  "IHADA": "IHADA",
-  "いはだ": "IHADA",
-  "インフィニティ": "INFINITY",
-  "INFINITY": "INFINITY",
-  "いんふぃにてぃ": "INFINITY",
-  "イトリン": "ITRIM",
-  "ITRIM": "ITRIM",
-  "いとりん": "ITRIM",
-  "ジュリーク": "Jurlique",
-  "Jurlique": "Jurlique",
-  "じゅりーく": "Jurlique",
-  "K-パレット": "K-Palette",
-  "k-パレット": "K-Palette",
-  "K-Palette": "K-Palette",
-  "Kパレット": "K-Palette",
-  "kパレット": "K-Palette",
-  "けーぱれっと": "K-Palette",
-  "毛穴パテ職人": "Keana Pate SHOKUNIN",
-  "Keana Pate SHOKUNIN": "Keana Pate SHOKUNIN",
-  "けあなぱてしょくにん": "Keana Pate SHOKUNIN",
-  "ケサランパサラン": "KesalanPatharan",
-  "KesalanPatharan": "KesalanPatharan",
-  "けさらんぱさらん": "KesalanPatharan",
-  "キス": "KiSS",
-  "KiSS": "KiSS",
-  "きす": "KiSS",
-  "江原道": "Koh Gen Do",
-  "Koh Gen Do": "Koh Gen Do",
-  "こうげんどう": "Koh Gen Do",
-  "エルボラリオ": "L'ERBOLARIO",
-  "L'ERBOLARIO": "L'ERBOLARIO",
-  "えるぼらりお": "L'ERBOLARIO",
-  "ロレアル パリ": "L'ORÉAL PARIS",
-  "L'ORÉAL PARIS": "L'ORÉAL PARIS",
-  "ロレアルパリ": "L'ORÉAL PARIS",
-  "ろれあるぱり": "L'ORÉAL PARIS",
-  "ラブルケット": "L:A BRUKET",
-  "L:A BRUKET": "L:A BRUKET",
-  "らぶるけっと": "L:A BRUKET",
-  "ラブッシュ ルージュ": "La Bouche Rouge",
-  "La Bouche Rouge": "La Bouche Rouge",
-  "ラブッシュルージュ": "La Bouche Rouge",
-  "らぶっしゅるーじゅ": "La Bouche Rouge",
-  "ラメール": "LA MER",
-  "LA MER": "LA MER",
-  "らめーる": "LA MER",
-  "ラロッシュポゼ": "LA ROCHE-POSAY",
-  "LA ROCHE-POSAY": "LA ROCHE-POSAY",
-  "らろっしゅぽぜ": "LA ROCHE-POSAY",
-  "ラボシリーズ": "LAB SERIES",
-  "LAB SERIES": "LAB SERIES",
-  "らぼしりーず": "LAB SERIES",
-  "レ・メルヴェイユーズ ラデュレ": "Ladurée",
-  "Ladurée": "Ladurée",
-  "レメルヴェイユーズラデュレ": "Ladurée",
-  "れめるヴぇいゆーずらでゅれ": "Ladurée",
-  "ラカ": "Laka",
-  "Laka": "Laka",
-  "らか": "Laka",
-  "ラリン": "Laline",
-  "Laline": "Laline",
-  "らりん": "Laline",
-  "ランコム": "LANCÔME",
-  "LANCÔME": "LANCÔME",
-  "らんこむ": "LANCÔME",
-  "ラネージュ": "Laneige",
-  "Laneige": "Laneige",
-  "らねーじゅ": "Laneige",
-  "ローラ メルシエ": "laura mercier",
-  "laura mercier": "laura mercier",
-  "ローラメルシエ": "laura mercier",
-  "ろーらめるしえ": "laura mercier",
-  "ラブライナー": "Love Liner",
-  "Love Liner": "Love Liner",
-  "らぶらいなー": "Love Liner",
-  "ルシード": "LUCIDO",
-  "LUCIDO": "LUCIDO",
-  "るしーど": "LUCIDO",
-  "ラッシュ": "LUSH",
-  "LUSH": "LUSH",
-  "らっしゅ": "LUSH",
-  "ラックス": "LUX",
-  "LUX": "LUX",
-  "らっくす": "LUX",
-  "m.m.m": "m.m.m",
-  "エムエムエム": "m.m.m",
-  "えむえむえむ": "m.m.m",
-  "マジョリカ マジョルカ": "MAJOLICA MAJORCA",
-  "MAJOLICA MAJORCA": "MAJOLICA MAJORCA",
-  "マジョリカマジョルカ": "MAJOLICA MAJORCA",
-  "まじょりかまじょるか": "MAJOLICA MAJORCA",
-  "メイクアップフォーエバー": "MAKE UP FOR EVER",
-  "MAKE UP FOR EVER": "MAKE UP FOR EVER",
-  "めいくあっぷふぉーえばー": "MAKE UP FOR EVER",
-  "ママバター": "MAMA BUTTER",
-  "MAMA BUTTER": "MAMA BUTTER",
-  "ままばたー": "MAMA BUTTER",
-  "マニキュリスト": "manucurist",
-  "manucurist": "manucurist",
-  "まにきゅりすと": "manucurist",
-  "マークスアンドウェブ": "MARKS&WEB",
-  "MARKS&WEB": "MARKS&WEB",
-  "まーくすあんどうぇぶ": "MARKS&WEB",
-  "メイベリン ニューヨーク": "MAYBELLINE NEW YORK",
-  "MAYBELLINE NEW YORK": "MAYBELLINE NEW YORK",
-  "メイベリンニューヨーク": "MAYBELLINE NEW YORK",
-  "めいべりんにゅーよーく": "MAYBELLINE NEW YORK",
-  "MDNA SKIN": "MDNA SKIN",
-  "mdna skin": "MDNA SKIN",
-  "エムディーエヌエースキン": "MDNA SKIN",
-  "えむでぃーえぬえーすきん": "MDNA SKIN",
-  "MiMC": "MiMC",
-  "mimc": "MiMC",
-  "エムアイエムシー": "MiMC",
-  "えむあいえむしー": "MiMC",
-  "ミシャ": "MISSHA",
-  "MISSHA": "MISSHA",
-  "みしゃ": "MISSHA",
-  "M・A・C (マック)": "M·A·C",
-  "m・a・c (マック)": "M·A·C",
-  "M·A·C": "M·A·C",
-  "マック": "M·A·C",
-  "まっく": "M·A·C",
-  "Nオーガニック": "N organic",
-  "nオーガニック": "N organic",
-  "N organic": "N organic",
-  "えぬおーがにっく": "N organic",
-  "ナリン": "nahrin",
-  "nahrin": "nahrin",
-  "なりん": "nahrin",
-  "ネイルマティック": "nailmatic",
-  "nailmatic": "nailmatic",
-  "ねいるまてぃっく": "nailmatic",
-  "ネイルズインク": "NAILS INC",
-  "NAILS INC": "NAILS INC",
-  "ねいるずいんく": "NAILS INC",
-  "NARS (ナーズ)": "NARS",
-  "nars (ナーズ)": "NARS",
-  "NARS": "NARS",
-  "ナーズ": "NARS",
-  "なーず": "NARS",
-  "ナチュラグラッセ": "naturaglacé",
-  "naturaglacé": "naturaglacé",
-  "なちゅらぐらっせ": "naturaglacé",
-  "ネイチャーリパブリック": "Nature Republic",
-  "Nature Republic": "Nature Republic",
-  "ねいちゃーりぱぶりっく": "Nature Republic",
-  "ニールズヤード レメディーズ": "NEAL'S YARD REMEDIES",
-  "NEAL'S YARD REMEDIES": "NEAL'S YARD REMEDIES",
-  "ニールズヤードレメディーズ": "NEAL'S YARD REMEDIES",
-  "にーるずやーど れめでぃーず": "NEAL'S YARD REMEDIES",
-  "ニュートロジーナ": "Neutrogena",
-  "Neutrogena": "Neutrogena",
-  "にゅーとろじーな": "Neutrogena",
-  "ニベア": "NIVEA",
-  "NIVEA": "NIVEA",
-  "にべあ": "NIVEA",
-  "ノイロ": "noiro",
-  "noiro": "noiro",
-  "のいろ": "noiro",
-  "ノンフィクション": "NONFICTION",
-  "NONFICTION": "NONFICTION",
-  "のんふぃくしょん": "NONFICTION",
-  "NYX プロフェッショナル メイクアップ": "NYX Professional Makeup",
-  "nyx プロフェッショナル メイクアップ": "NYX Professional Makeup",
-  "NYX Professional Makeup": "NYX Professional Makeup",
-  "NYXプロフェッショナルメイクアップ": "NYX Professional Makeup",
-  "nyxプロフェッショナルメイクアップ": "NYX Professional Makeup",
-  "にっくすぷろふぇっしょなるめいくあっぷ": "NYX Professional Makeup",
-  "オバジ": "Obagi",
-  "Obagi": "Obagi",
-  "おばじ": "Obagi",
-  "オフィシーヌ ユニヴェルセル ビュリー": "OFFICINE UNIVERSELLE BULY",
-  "OFFICINE UNIVERSELLE BULY": "OFFICINE UNIVERSELLE BULY",
-  "オフィシーヌユニヴェルセルビュリー": "OFFICINE UNIVERSELLE BULY",
-  "おふぃしーぬゆにヴぇるせるびゅりー": "OFFICINE UNIVERSELLE BULY",
-  "ワンバイコーセー": "ONE BY KOSÉ",
-  "ONE BY KOSÉ": "ONE BY KOSÉ",
-  "わんばいこーせー": "ONE BY KOSÉ",
-  "オンリーミネラル": "ONLY MINERALS",
-  "ONLY MINERALS": "ONLY MINERALS",
-  "おんりーみねらる": "ONLY MINERALS",
-  "オペラ": "OPERA",
-  "OPERA": "OPERA",
-  "おぺら": "OPERA",
-  "OPI (オーピーアイ)": "OPI",
-  "opi (オーピーアイ)": "OPI",
-  "OPI": "OPI",
-  "オーピーアイ": "OPI",
-  "おーぴーあい": "OPI",
-  "オサジ": "OSAJI",
-  "OSAJI": "OSAJI",
-  "おさじ": "OSAJI",
-  "パンテーン": "Pantene",
-  "Pantene": "Pantene",
-  "ぱんてーん": "Pantene",
-  "パラドゥ": "ParaDo",
-  "ParaDo": "ParaDo",
-  "ぱらどぅ": "ParaDo",
-  "ポール & ジョー": "PAUL & JOE",
-  "PAUL & JOE": "PAUL & JOE",
-  "ポール&ジョー": "PAUL & JOE",
-  "ぽーるあんどじょー": "PAUL & JOE",
-  "ペリペラ": "peripera",
-  "peripera": "peripera",
-  "ぺりぺら": "peripera",
-  "プレディア": "Predia",
-  "Predia": "Predia",
-  "ぷれでぃあ": "Predia",
-  "レシピスト": "recipist",
-  "recipist": "recipist",
-  "れしぴすと": "recipist",
-  "Red B.A": "Red B.A",
-  "red b.a": "Red B.A",
-  "レッドビーエー": "Red B.A",
-  "れっどびーえー": "Red B.A",
-  "レブロン": "REVLON",
-  "REVLON": "REVLON",
-  "れぶろん": "REVLON",
-  "リンメル": "RIMMEL LONDON",
-  "RIMMEL LONDON": "RIMMEL LONDON",
-  "りんめる": "RIMMEL LONDON",
-  "rms ビューティー": "rms beauty",
-  "rms beauty": "rms beauty",
-  "rmsビューティー": "rms beauty",
-  "あーるえむえすびゅーてぃー": "rms beauty",
-  "ロジェ・ガレ": "ROGER&GALLET",
-  "ROGER&GALLET": "ROGER&GALLET",
-  "ロジェガレ": "ROGER&GALLET",
-  "ろじぇがれ": "ROGER&GALLET",
-  "ロムアンド": "rom&nd",
-  "rom&nd": "rom&nd",
-  "ろむあんど": "rom&nd",
-  "ローズラボ": "ROSE LABO",
-  "ROSE LABO": "ROSE LABO",
-  "ろーずらぼ": "ROSE LABO",
-  "サボン": "SABON",
-  "SABON": "SABON",
-  "さぼん": "SABON",
-  "イヴ・サンローラン": "Saint Laurent",
-  "Saint Laurent": "Saint Laurent",
-  "イヴサンローラン": "Saint Laurent",
-  "いゔさんろーらん": "Saint Laurent",
-  "サリーハンセン": "Sally Hansen",
-  "Sally Hansen": "Sally Hansen",
-  "さりーはんせん": "Sally Hansen",
-  "サンタ・マリア・ノヴェッラ": "Santa Maria Novella",
-  "Santa Maria Novella": "Santa Maria Novella",
-  "サンタマリアノヴェッラ": "Santa Maria Novella",
-  "さんたまりあのヴぇっら": "Santa Maria Novella",
-  "専科": "Senka",
-  "Senka": "Senka",
-  "せんか": "Senka",
-  "セルジュ ルタンス": "SERGE LUTENS",
-  "SERGE LUTENS": "SERGE LUTENS",
-  "セルジュルタンス": "SERGE LUTENS",
-  "せるじゅるたんす": "SERGE LUTENS",
-  "シロ": "SHIRO",
-  "SHIRO": "SHIRO",
-  "しろ": "SHIRO",
-  "シン ピュルテ": "SINN PURETE",
-  "SINN PURETE": "SINN PURETE",
-  "シンピュルテ": "SINN PURETE",
-  "しんぴゅるて": "SINN PURETE",
-  "スキンフード": "SKINFOOD",
-  "SKINFOOD": "SKINFOOD",
-  "すきんふーど": "SKINFOOD",
-  "スナイデル ビューティ": "SNIDEL BEAUTY",
-  "SNIDEL BEAUTY": "SNIDEL BEAUTY",
-  "スナイデルビューティ": "SNIDEL BEAUTY",
-  "すないでるびゅーてぃ": "SNIDEL BEAUTY",
-  "スパセイロン": "SPA CEYLON",
-  "SPA CEYLON": "SPA CEYLON",
-  "すぱせいろん": "SPA CEYLON",
-  "サンデイズ": "sundays",
-  "sundays": "sundays",
-  "さんでいず": "sundays",
-  "スック": "SUQQU",
-  "SUQQU": "SUQQU",
-  "すっく": "SUQQU",
-  "タカミ": "TAKAMI",
-  "TAKAMI": "TAKAMI",
-  "たかみ": "TAKAMI",
-  "タルト": "tarte",
-  "tarte": "tarte",
-  "たると": "tarte",
-  "タン": "THANN",
-  "THANN": "THANN",
-  "たん": "THANN",
-  "ザ・ボディショップ": "THE BODY SHOP",
-  "THE BODY SHOP": "THE BODY SHOP",
-  "ザボディショップ": "THE BODY SHOP",
-  "ざぼでぃしょっぷ": "THE BODY SHOP",
-  "スリー": "THREE",
-  "THREE": "THREE",
-  "すりー": "THREE",
-  "ティルティル": "TIRTIR",
-  "TIRTIR": "TIRTIR",
-  "てぃるてぃる": "TIRTIR",
-  "トーン": "to/one",
-  "to/one": "to/one",
-  "とーん": "to/one",
-  "トム フォード ビューティ": "TOM FORD",
-  "TOM FORD": "TOM FORD",
-  "トムフォードビューティ": "TOM FORD",
-  "とむふぉーどびゅーてぃ": "TOM FORD",
-  "トゥークールフォースクール": "too cool for school",
-  "too cool for school": "too cool for school",
-  "とぅーくーるふぉーすくーる": "too cool for school",
-  "トゥーフェイスド": "Too Faced",
-  "Too Faced": "Too Faced",
-  "とぅーふぇいすど": "Too Faced",
-  "生活の木": "Tree of life",
-  "Tree of life": "Tree of life",
-  "せいかつのき": "Tree of life",
-  "トワニー": "TWANY",
-  "TWANY": "TWANY",
-  "とわにー": "TWANY",
-  "ウカ": "uka",
-  "uka": "uka",
-  "うか": "uka",
-  "アンイーブン": "uneven",
-  "uneven": "uneven",
-  "あんいーぶん": "uneven",
-  "ウーノ": "UNO",
-  "UNO": "UNO",
-  "うーの": "UNO",
-  "ユーアーグラム": "UR GLAM",
-  "UR GLAM": "UR GLAM",
-  "ゆーあーぐらむ": "UR GLAM",
-  "ウズ": "UZU",
-  "UZU": "UZU",
-  "うず": "UZU",
-  "ヴァセリン": "Vaselin",
-  "Vaselin": "Vaselin",
-  "ヴぁせりん": "Vaselin",
-  "vaseline": "Vaselin",
-  "ヴィセ": "Visée",
-  "Visée": "Visée",
-  "びせ": "Visée",
-  "ワソウ": "WASO",
-  "WASO": "WASO",
-  "わそう": "WASO",
-  "ヴェレダ": "WELEDA",
-  "WELEDA": "WELEDA",
-  "ゔぇれだ": "WELEDA",
-  "フーミー": "WHOMEE",
-  "WHOMEE": "WHOMEE",
-  "ふーみー": "WHOMEE",
-  "ウォンジョンヨ": "Wonjungyo",
-  "Wonjungyo": "Wonjungyo",
-  "うぉんじょんよ": "Wonjungyo",
-  "よーじや": "Yojiya",
-  "Yojiya": "Yojiya",
-  "ヨージヤ": "Yojiya",
-  "ようじや": "Yojiya",
-  "Z&MA (ザンマ)": "Z&MA",
-  "z&ma (ザンマ)": "Z&MA",
-  "Z&MA": "Z&MA",
-  "ザンマ": "Z&MA",
-  "ざんま": "Z&MA",
-  "ZAO (ザオ)": "ZAO",
-  "zao (ザオ)": "ZAO",
-  "ZAO": "ZAO",
-  "ザオ": "ZAO",
-  "ざお": "ZAO",
-  "ズーシー": "ZEESEA",
-  "ZEESEA": "ZEESEA",
-  "ずーしー": "ZEESEA",
-  "花西子": "花西子Florasis",
-  "花西子Florasis": "花西子Florasis",
-  "ファーシーズ": "花西子Florasis",
-  "ふぁーしーず": "花西子Florasis"
+  "ACSEINE": [
+    "アクセーヌ",
+    "ACSEINE",
+    "あくせーぬ"
+  ],
+  "ADDICTION": [
+    "アディクション",
+    "ADDICTION",
+    "あでぃくしょん"
+  ],
+  "AERIN": [
+    "エアリン",
+    "AERIN",
+    "えありん"
+  ],
+  "Amplitude": [
+    "アンプリチュード",
+    "Amplitude",
+    "あんぷりちゅーど"
+  ],
+  "ANNA SUI": [
+    "アナスイ",
+    "ANNA SUI",
+    "あなすい"
+  ],
+  "AQUA AQUA": [
+    "アクア・アクア",
+    "AQUA AQUA",
+    "アクアアクア",
+    "あくああくあ"
+  ],
+  "aramis": [
+    "アラミス",
+    "aramis",
+    "あらみす"
+  ],
+  "ASTALIFT": [
+    "アスタリフト",
+    "ASTALIFT",
+    "あすたりふと"
+  ],
+  "AYURA": [
+    "アユーラ",
+    "AYURA",
+    "あゆーら"
+  ],
+  "A'pieu": [
+    "アピュー",
+    "A'pieu",
+    "あぴゅー"
+  ],
+  "B IDOL": [
+    "ビーアイドル",
+    "B IDOL",
+    "びーあいどる"
+  ],
+  "B.A": [
+    "B.A",
+    "b.a",
+    "ビーエー",
+    "びーえー"
+  ],
+  "BABYMEE": [
+    "ベイビーミー",
+    "BABYMEE",
+    "べいびーみー"
+  ],
+  "BARAKA": [
+    "バラカ",
+    "BARAKA",
+    "ばらか"
+  ],
+  "bareMinerals": [
+    "ベアミネラル",
+    "bareMinerals",
+    "べあみねらる"
+  ],
+  "Benefique": [
+    "ベネフィーク",
+    "Benefique",
+    "べねふぃーく"
+  ],
+  "BLEND BERRY": [
+    "ブレンドベリー",
+    "BLEND BERRY",
+    "ぶれんどべりー"
+  ],
+  "BOBBI BROWN": [
+    "ボビイ ブラウン",
+    "BOBBI BROWN",
+    "ボビイブラウン",
+    "ぼびいぶらうん"
+  ],
+  "BRILLIAGE": [
+    "ブリリアージュ",
+    "BRILLIAGE",
+    "ぶりりあーじゅ"
+  ],
+  "BURBERRY": [
+    "バーバリー",
+    "BURBERRY",
+    "ばーばりー"
+  ],
+  "CANADEL": [
+    "カナデル",
+    "CANADEL",
+    "かなでる"
+  ],
+  "Celvoke": [
+    "セルヴォーク",
+    "Celvoke",
+    "セルボーク",
+    "せるヴぉーく",
+    "せるぼーく"
+  ],
+  "Chacott": [
+    "チャコット",
+    "Chacott",
+    "ちゃこっと"
+  ],
+  "Chantecaille": [
+    "シャンテカイユ",
+    "Chantecaille",
+    "しゃんてかいう"
+  ],
+  "CHICCA": [
+    "キッカ",
+    "CHICCA",
+    "きっか"
+  ],
+  "Christian Louboutin": [
+    "クリスチャン ルブタン",
+    "Christian Louboutin",
+    "クリスチャンルブタン",
+    "くりすちゃんるぶたん"
+  ],
+  "Ciaté LONDON": [
+    "シアテ ロンドン",
+    "Ciaté LONDON",
+    "シアテロンドン",
+    "しあてろんどん"
+  ],
+  "CLARINS": [
+    "クラランス",
+    "CLARINS",
+    "くららんす"
+  ],
+  "CLEAN": [
+    "クリーン",
+    "CLEAN",
+    "くりーん"
+  ],
+  "CLINIQUE": [
+    "クリニーク",
+    "CLINIQUE",
+    "くりにーく"
+  ],
+  "CLIO": [
+    "クリオ",
+    "CLIO",
+    "くりお"
+  ],
+  "COVERMARK": [
+    "カバーマーク",
+    "COVERMARK",
+    "かばーまーく"
+  ],
+  "Courrèges": [
+    "クレージュ",
+    "Courrèges",
+    "くれーじゅ"
+  ],
+  "CRAN BY MOLAK": [
+    "クラン バイ モラク",
+    "CRAN BY MOLAK",
+    "クランバイモラク",
+    "くらんばいもらく"
+  ],
+  "D-UP": [
+    "ディーアップ",
+    "D-UP",
+    "でぃーあっぷ"
+  ],
+  "DEAR DAHLIA": [
+    "ディアダリア",
+    "DEAR DAHLIA",
+    "でぃあだりあ"
+  ],
+  "DECENCIA": [
+    "ディセンシア",
+    "DECENCIA",
+    "でぃせんしあ"
+  ],
+  "deborah lippmann": [
+    "デボラ リップマン",
+    "deborah lippmann",
+    "デボラリップマン",
+    "でぼらりっぷまん"
+  ],
+  "dejavu": [
+    "デジャヴュ",
+    "dejavu",
+    "でじゃヴゅ",
+    "でじゃびゅ"
+  ],
+  "dermalogica": [
+    "ダーマロジカ",
+    "dermalogica",
+    "だーまろじか"
+  ],
+  "DIOR": [
+    "ディオール",
+    "DIOR",
+    "でぃおーる"
+  ],
+  "d プログラム": [
+    "dprogram",
+    "d プログラム",
+    "dプログラム",
+    "でぃーぷろぐらむ"
+  ],
+  "ドクターハウシュカ": [
+    "Dr.Hauschka",
+    "dr.hauschka",
+    "ドクターハウシュカ",
+    "どくたーはうしゅか"
+  ],
+  "デュカート": [
+    "Ducato",
+    "ducato",
+    "デュカート",
+    "でゅかーと"
+  ],
+  "DUO": [
+    "デュオ",
+    "DUO",
+    "でゅお"
+  ],
+  "Estée Lauder": [
+    "エスティ ローダー",
+    "Estée Lauder",
+    "エスティローダー",
+    "えすてぃろーだー"
+  ],
+  "essie": [
+    "エッシー",
+    "essie",
+    "えっしー"
+  ],
+  "ETUDE": [
+    "エチュード",
+    "ETUDE",
+    "えちゅーど"
+  ],
+  "ETVOS": [
+    "エトヴォス",
+    "ETVOS",
+    "エトボス",
+    "えとヴぉす",
+    "えとぼす"
+  ],
+  "Ex:BEAUTE": [
+    "エクスボーテ",
+    "Ex:BEAUTE",
+    "えくすぼーて"
+  ],
+  "FASIO": [
+    "ファシオ",
+    "FASIO",
+    "ふぁしお"
+  ],
+  "FEMMUE": [
+    "ファミュ",
+    "FEMMUE",
+    "ふぁみゅ"
+  ],
+  "FIVEISM × THREE": [
+    "ファイブイズム バイ スリー",
+    "FIVEISM × THREE",
+    "ファイブイズムバイスリー",
+    "ふぁいぶいずむばいすりー"
+  ],
+  "Fujiko": [
+    "フジコ",
+    "Fujiko",
+    "ふじこ"
+  ],
+  "GUCCI": [
+    "グッチ",
+    "GUCCI",
+    "ぐっち"
+  ],
+  "GATSBY": [
+    "ギャツビー",
+    "GATSBY",
+    "ぎゃつびー"
+  ],
+  "Giorgio Armani": [
+    "ジョルジオ アルマーニ",
+    "Giorgio Armani",
+    "ジョルジオアルマーニ",
+    "じょるじおあるまーに"
+  ],
+  "Givenchy": [
+    "ジバンシイ",
+    "Givenchy",
+    "じばんしい"
+  ],
+  "GUERLAIN": [
+    "ゲラン",
+    "GUERLAIN",
+    "げらん"
+  ],
+  "HABA": [
+    "ハーバー",
+    "HABA",
+    "はーばー"
+  ],
+  "HELENA RUBINSTEIN": [
+    "ヘレナ ルビンスタイン",
+    "HELENA RUBINSTEIN",
+    "ヘレナルビンスタイン",
+    "へれなるびんすたいん"
+  ],
+  "HERA": [
+    "ヘラ",
+    "HERA",
+    "へら"
+  ],
+  "HIKARIMIRAI": [
+    "ヒカリミライ",
+    "HIKARIMIRAI",
+    "ひかりみらい"
+  ],
+  "hince": [
+    "ヒンス",
+    "hince",
+    "ひんす"
+  ],
+  "House of Rose": [
+    "ハウス オブ ローゼ",
+    "House of Rose",
+    "ハウスオブローゼ",
+    "はうすおぶろーぜ"
+  ],
+  "Hada Labo": [
+    "肌ラボ",
+    "Hada Labo",
+    "はだらぼ"
+  ],
+  "IHADA": [
+    "イハダ",
+    "IHADA",
+    "いはだ"
+  ],
+  "INFINITY": [
+    "インフィニティ",
+    "INFINITY",
+    "いんふぃにてぃ"
+  ],
+  "ITRIM": [
+    "イトリン",
+    "ITRIM",
+    "いとりん"
+  ],
+  "Jurlique": [
+    "ジュリーク",
+    "Jurlique",
+    "じゅりーく"
+  ],
+  "K-Palette": [
+    "K-パレット",
+    "k-パレット",
+    "K-Palette",
+    "Kパレット",
+    "kパレット",
+    "けーぱれっと"
+  ],
+  "Keana Pate SHOKUNIN": [
+    "毛穴パテ職人",
+    "Keana Pate SHOKUNIN",
+    "けあなぱてしょくにん"
+  ],
+  "KesalanPatharan": [
+    "ケサランパサラン",
+    "KesalanPatharan",
+    "けさらんぱさらん"
+  ],
+  "KiSS": [
+    "キス",
+    "KiSS",
+    "きす"
+  ],
+  "Koh Gen Do": [
+    "江原道",
+    "Koh Gen Do",
+    "こうげんどう"
+  ],
+  "L'ERBOLARIO": [
+    "エルボラリオ",
+    "L'ERBOLARIO",
+    "えるぼらりお"
+  ],
+  "L'ORÉAL PARIS": [
+    "ロレアル パリ",
+    "L'ORÉAL PARIS",
+    "ロレアルパリ",
+    "ろれあるぱり"
+  ],
+  "L:A BRUKET": [
+    "ラブルケット",
+    "L:A BRUKET",
+    "らぶるけっと"
+  ],
+  "La Bouche Rouge": [
+    "ラブッシュ ルージュ",
+    "La Bouche Rouge",
+    "ラブッシュルージュ",
+    "らぶっしゅるーじゅ"
+  ],
+  "LA MER": [
+    "ラメール",
+    "LA MER",
+    "らめーる"
+  ],
+  "LA ROCHE-POSAY": [
+    "ラロッシュポゼ",
+    "LA ROCHE-POSAY",
+    "らろっしゅぽぜ"
+  ],
+  "LAB SERIES": [
+    "ラボシリーズ",
+    "LAB SERIES",
+    "らぼしりーず"
+  ],
+  "Ladurée": [
+    "レ・メルヴェイユーズ ラデュレ",
+    "Ladurée",
+    "レメルヴェイユーズラデュレ",
+    "れめるヴぇいゆーずらでゅれ"
+  ],
+  "Laka": [
+    "ラカ",
+    "Laka",
+    "らか"
+  ],
+  "Laline": [
+    "ラリン",
+    "Laline",
+    "らりん"
+  ],
+  "LANCÔME": [
+    "ランコム",
+    "LANCÔME",
+    "らんこむ"
+  ],
+  "Laneige": [
+    "ラネージュ",
+    "Laneige",
+    "らねーじゅ"
+  ],
+  "laura mercier": [
+    "ローラ メルシエ",
+    "laura mercier",
+    "ローラメルシエ",
+    "ろーらめるしえ"
+  ],
+  "Love Liner": [
+    "ラブライナー",
+    "Love Liner",
+    "らぶらいなー"
+  ],
+  "LUCIDO": [
+    "ルシード",
+    "LUCIDO",
+    "るしーど"
+  ],
+  "LUSH": [
+    "ラッシュ",
+    "LUSH",
+    "らっしゅ"
+  ],
+  "LUX": [
+    "ラックス",
+    "LUX",
+    "らっくす"
+  ],
+  "m.m.m": [
+    "m.m.m",
+    "エムエムエム",
+    "えむえむえむ"
+  ],
+  "MAJOLICA MAJORCA": [
+    "マジョリカ マジョルカ",
+    "MAJOLICA MAJORCA",
+    "マジョリカマジョルカ",
+    "まじょりかまじょるか"
+  ],
+  "MAKE UP FOR EVER": [
+    "メイクアップフォーエバー",
+    "MAKE UP FOR EVER",
+    "めいくあっぷふぉーえばー"
+  ],
+  "MAMA BUTTER": [
+    "ママバター",
+    "MAMA BUTTER",
+    "ままばたー"
+  ],
+  "manucurist": [
+    "マニキュリスト",
+    "manucurist",
+    "まにきゅりすと"
+  ],
+  "MARKS&WEB": [
+    "マークスアンドウェブ",
+    "MARKS&WEB",
+    "まーくすあんどうぇぶ"
+  ],
+  "MAYBELLINE NEW YORK": [
+    "メイベリン ニューヨーク",
+    "MAYBELLINE NEW YORK",
+    "メイベリンニューヨーク",
+    "めいべりんにゅーよーく"
+  ],
+  "MDNA SKIN": [
+    "MDNA SKIN",
+    "mdna skin",
+    "エムディーエヌエースキン",
+    "えむでぃーえぬえーすきん"
+  ],
+  "MiMC": [
+    "MiMC",
+    "mimc",
+    "エムアイエムシー",
+    "えむあいえむしー"
+  ],
+  "MISSHA": [
+    "ミシャ",
+    "MISSHA",
+    "みしゃ"
+  ],
+  "M·A·C": [
+    "M・A・C (マック)",
+    "m・a・c (マック)",
+    "M·A·C",
+    "マック",
+    "まっく"
+  ],
+  "N organic": [
+    "Nオーガニック",
+    "nオーガニック",
+    "N organic",
+    "えぬおーがにっく"
+  ],
+  "nahrin": [
+    "ナリン",
+    "nahrin",
+    "なりん"
+  ],
+  "nailmatic": [
+    "ネイルマティック",
+    "nailmatic",
+    "ねいるまてぃっく"
+  ],
+  "NAILS INC": [
+    "ネイルズインク",
+    "NAILS INC",
+    "ねいるずいんく"
+  ],
+  "NARS": [
+    "NARS (ナーズ)",
+    "nars (ナーズ)",
+    "NARS",
+    "ナーズ",
+    "なーず"
+  ],
+  "naturaglacé": [
+    "ナチュラグラッセ",
+    "naturaglacé",
+    "なちゅらぐらっせ"
+  ],
+  "Nature Republic": [
+    "ネイチャーリパブリック",
+    "Nature Republic",
+    "ねいちゃーりぱぶりっく"
+  ],
+  "NEAL'S YARD REMEDIES": [
+    "ニールズヤード レメディーズ",
+    "NEAL'S YARD REMEDIES",
+    "ニールズヤードレメディーズ",
+    "にーるずやーど れめでぃーず"
+  ],
+  "Neutrogena": [
+    "ニュートロジーナ",
+    "Neutrogena",
+    "にゅーとろじーな"
+  ],
+  "NIVEA": [
+    "ニベア",
+    "NIVEA",
+    "にべあ"
+  ],
+  "noiro": [
+    "ノイロ",
+    "noiro",
+    "のいろ"
+  ],
+  "NONFICTION": [
+    "ノンフィクション",
+    "NONFICTION",
+    "のんふぃくしょん"
+  ],
+  "NYX Professional Makeup": [
+    "NYX プロフェッショナル メイクアップ",
+    "nyx プロフェッショナル メイクアップ",
+    "NYX Professional Makeup",
+    "NYXプロフェッショナルメイクアップ",
+    "nyxプロフェッショナルメイクアップ",
+    "にっくすぷろふぇっしょなるめいくあっぷ"
+  ],
+  "Obagi": [
+    "オバジ",
+    "Obagi",
+    "おばじ"
+  ],
+  "OFFICINE UNIVERSELLE BULY": [
+    "オフィシーヌ ユニヴェルセル ビュリー",
+    "OFFICINE UNIVERSELLE BULY",
+    "オフィシーヌユニヴェルセルビュリー",
+    "おふぃしーぬゆにヴぇるせるびゅりー"
+  ],
+  "ONE BY KOSÉ": [
+    "ワンバイコーセー",
+    "ONE BY KOSÉ",
+    "わんばいこーせー"
+  ],
+  "ONLY MINERALS": [
+    "オンリーミネラル",
+    "ONLY MINERALS",
+    "おんりーみねらる"
+  ],
+  "OPERA": [
+    "オペラ",
+    "OPERA",
+    "おぺら"
+  ],
+  "OPI": [
+    "OPI (オーピーアイ)",
+    "opi (オーピーアイ)",
+    "OPI",
+    "オーピーアイ",
+    "おーぴーあい"
+  ],
+  "OSAJI": [
+    "オサジ",
+    "OSAJI",
+    "おさじ"
+  ],
+  "Pantene": [
+    "パンテーン",
+    "Pantene",
+    "ぱんてーん"
+  ],
+  "ParaDo": [
+    "パラドゥ",
+    "ParaDo",
+    "ぱらどぅ"
+  ],
+  "PAUL & JOE": [
+    "ポール & ジョー",
+    "PAUL & JOE",
+    "ポール&ジョー",
+    "ぽーるあんどじょー"
+  ],
+  "peripera": [
+    "ペリペラ",
+    "peripera",
+    "ぺりぺら"
+  ],
+  "Predia": [
+    "プレディア",
+    "Predia",
+    "ぷれでぃあ"
+  ],
+  "recipist": [
+    "レシピスト",
+    "recipist",
+    "れしぴすと"
+  ],
+  "Red B.A": [
+    "Red B.A",
+    "red b.a",
+    "レッドビーエー",
+    "れっどびーえー"
+  ],
+  "REVLON": [
+    "レブロン",
+    "REVLON",
+    "れぶろん"
+  ],
+  "RIMMEL LONDON": [
+    "リンメル",
+    "RIMMEL LONDON",
+    "りんめる"
+  ],
+  "rms beauty": [
+    "rms ビューティー",
+    "rms beauty",
+    "rmsビューティー",
+    "あーるえむえすびゅーてぃー"
+  ],
+  "ROGER&GALLET": [
+    "ロジェ・ガレ",
+    "ROGER&GALLET",
+    "ロジェガレ",
+    "ろじぇがれ"
+  ],
+  "rom&nd": [
+    "ロムアンド",
+    "rom&nd",
+    "ろむあんど"
+  ],
+  "ROSE LABO": [
+    "ローズラボ",
+    "ROSE LABO",
+    "ろーずらぼ"
+  ],
+  "SABON": [
+    "サボン",
+    "SABON",
+    "さぼん"
+  ],
+  "Saint Laurent": [
+    "イヴ・サンローラン",
+    "Saint Laurent",
+    "イヴサンローラン",
+    "いゔさんろーらん"
+  ],
+  "Sally Hansen": [
+    "サリーハンセン",
+    "Sally Hansen",
+    "さりーはんせん"
+  ],
+  "Santa Maria Novella": [
+    "サンタ・マリア・ノヴェッラ",
+    "Santa Maria Novella",
+    "サンタマリアノヴェッラ",
+    "さんたまりあのヴぇっら"
+  ],
+  "Senka": [
+    "専科",
+    "Senka",
+    "せんか"
+  ],
+  "SERGE LUTENS": [
+    "セルジュ ルタンス",
+    "SERGE LUTENS",
+    "セルジュルタンス",
+    "せるじゅるたんす"
+  ],
+  "SHIRO": [
+    "シロ",
+    "SHIRO",
+    "しろ"
+  ],
+  "SINN PURETE": [
+    "シン ピュルテ",
+    "SINN PURETE",
+    "シンピュルテ",
+    "しんぴゅるて"
+  ],
+  "SKINFOOD": [
+    "スキンフード",
+    "SKINFOOD",
+    "すきんふーど"
+  ],
+  "SNIDEL BEAUTY": [
+    "スナイデル ビューティ",
+    "SNIDEL BEAUTY",
+    "スナイデルビューティ",
+    "すないでるびゅーてぃ"
+  ],
+  "SPA CEYLON": [
+    "スパセイロン",
+    "SPA CEYLON",
+    "すぱせいろん"
+  ],
+  "sundays": [
+    "サンデイズ",
+    "sundays",
+    "さんでいず"
+  ],
+  "SUQQU": [
+    "スック",
+    "SUQQU",
+    "すっく"
+  ],
+  "TAKAMI": [
+    "タカミ",
+    "TAKAMI",
+    "たかみ"
+  ],
+  "tarte": [
+    "タルト",
+    "tarte",
+    "たると"
+  ],
+  "THANN": [
+    "タン",
+    "THANN",
+    "たん"
+  ],
+  "THE BODY SHOP": [
+    "ザ・ボディショップ",
+    "THE BODY SHOP",
+    "ザボディショップ",
+    "ざぼでぃしょっぷ"
+  ],
+  "THREE": [
+    "スリー",
+    "THREE",
+    "すりー"
+  ],
+  "TIRTIR": [
+    "ティルティル",
+    "TIRTIR",
+    "てぃるてぃる"
+  ],
+  "to/one": [
+    "トーン",
+    "to/one",
+    "とーん"
+  ],
+  "TOM FORD": [
+    "トム フォード ビューティ",
+    "TOM FORD",
+    "トムフォードビューティ",
+    "とむふぉーどびゅーてぃ"
+  ],
+  "too cool for school": [
+    "トゥークールフォースクール",
+    "too cool for school",
+    "とぅーくーるふぉーすくーる"
+  ],
+  "Too Faced": [
+    "トゥーフェイスド",
+    "Too Faced",
+    "とぅーふぇいすど"
+  ],
+  "Tree of life": [
+    "生活の木",
+    "Tree of life",
+    "せいかつのき"
+  ],
+  "TWANY": [
+    "トワニー",
+    "TWANY",
+    "とわにー"
+  ],
+  "uka": [
+    "ウカ",
+    "uka",
+    "うか"
+  ],
+  "uneven": [
+    "アンイーブン",
+    "uneven",
+    "あんいーぶん"
+  ],
+  "UNO": [
+    "ウーノ",
+    "UNO",
+    "うーの"
+  ],
+  "UR GLAM": [
+    "ユーアーグラム",
+    "UR GLAM",
+    "ゆーあーぐらむ"
+  ],
+  "UZU": [
+    "ウズ",
+    "UZU",
+    "うず"
+  ],
+  "Vaselin": [
+    "ヴァセリン",
+    "Vaselin",
+    "ヴぁせりん",
+    "vaseline"
+  ],
+  "Visée": [
+    "ヴィセ",
+    "Visée",
+    "びせ"
+  ],
+  "WASO": [
+    "ワソウ",
+    "WASO",
+    "わそう"
+  ],
+  "WELEDA": [
+    "ヴェレダ",
+    "WELEDA",
+    "ゔぇれだ"
+  ],
+  "WHOMEE": [
+    "フーミー",
+    "WHOMEE",
+    "ふーみー"
+  ],
+  "Wonjungyo": [
+    "ウォンジョンヨ",
+    "Wonjungyo",
+    "うぉんじょんよ"
+  ],
+  "Yojiya": [
+    "よーじや",
+    "Yojiya",
+    "ヨージヤ",
+    "ようじや"
+  ],
+  "Z&MA": [
+    "Z&MA (ザンマ)",
+    "z&ma (ザンマ)",
+    "Z&MA",
+    "ザンマ",
+    "ざんま"
+  ],
+  "ZAO": [
+    "ZAO (ザオ)",
+    "zao (ザオ)",
+    "ZAO",
+    "ザオ",
+    "ざお"
+  ],
+  "ZEESEA": [
+    "ズーシー",
+    "ZEESEA",
+    "ずーしー"
+  ],
+  "花西子Florasis": [
+    "花西子",
+    "花西子Florasis",
+    "ファーシーズ",
+    "ふぁーしーず"
+  ]
 }

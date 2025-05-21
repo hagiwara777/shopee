@@ -5,3 +5,4 @@ xlsxwriter # Excelファイルへの書き込み(ハイライト付き保存)に
 google-generativeai
 python-amazon-sp-api
 python-dotenv
+backoff
