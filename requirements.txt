@@ -6,3 +6,6 @@ google-generativeai
 python-amazon-sp-api
 python-dotenv
 backoff
+openai
+boto3>=1.34.0
+botocore>=1.34.0

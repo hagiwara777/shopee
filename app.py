@@ -1,36 +1,27 @@
 import streamlit as st
 import pandas as pd
-from modules.extractors import load_brands, get_preferred_brand_name
+from pipeline import run_pipeline, save_with_highlight
 
-st.title("Shopee自動リサーチ出品ツール（ブランド優先度検索デモ）")
-
-# ファイルアップロード欄
-uploaded_file = st.file_uploader("商品リストCSVをアップロードしてください", type=["csv"])
+st.title("ASIN一括日本語化＆検索ツール")
+uploaded_file = st.file_uploader("Excel/CSVファイルをアップロード", type=["xlsx", "csv"])
 
 if uploaded_file:
-    df = pd.read_csv(uploaded_file)
-    st.write("アップロードデータのプレビュー:", df.head())
+    if uploaded_file.name.endswith(".csv"):
+        df = pd.read_csv(uploaded_file)
+    else:
+        df = pd.read_excel(uploaded_file)
+    st.write("プレビュー", df.head())
 
-    # brands.jsonのロード
-    brands = load_brands()
+    # NGワードリストは必要に応じてファイル/テキストボックス等から取得
+    ng_words = []
+    if st.checkbox("NGワードファイル使用", value=False):
+        ng_file = st.file_uploader("NGワードリスト(txt)", type=["txt"])
+        if ng_file:
+            ng_words = ng_file.read().decode("utf-8").splitlines()
 
-    # ブランド検索用列が何か選ばせる（例：Brand, ブランド, brand_name等）
-    brand_col = st.selectbox("ブランド名カラムを選択してください", df.columns.tolist())
-
-    # 新しい列を作成
-    df["SP-API検索用ブランド名"] = df[brand_col].apply(
-        lambda b: get_preferred_brand_name(brands.get(str(b), [str(b)]))
-    )
-
-    st.write("ブランド優先度判定後のサンプル:")
-    st.dataframe(df[[brand_col, "SP-API検索用ブランド名"]].head(20))
-
-    # ダウンロードリンク
-    csv = df.to_csv(index=False, encoding="utf-8-sig")
-    st.download_button("変換後CSVをダウンロード", csv, file_name="output_with_spapi_brand.csv", mime="text/csv")
-
-else:
-    st.info("CSVファイルをアップロードしてください。")
-
-# ※ このサンプルは「SP-API検索用ブランド名」を決める部分まで。  
-#   実際のAPI連携・出品処理等は別途ロジックを追加してください。
+    if st.button("日本語化＆ASIN検索を実行"):
+        df_result = run_pipeline(df, title_col="Name", ng_words=ng_words)
+        st.dataframe(df_result.head())
+        # xlsxダウンロード
+        save_with_highlight(df_result, "output_with_asin.xlsx")
+        st.success("Excel出力しました。output_with_asin.xlsx")
