@@ -1,54 +1,4 @@
-def advanced_product_name_cleansing(text):
-    """高品質商品名クレンジング（英日翻訳機能統合）"""
-    if not text:
-        return ""
-    
-    # Unicode正規化（NFKC）- 既存cleansing.py機能
-    text = unicodedata.normalize('NFKC', text)
-    
-    # 除去対象のパターン（既存の高品質機能を統合）
-    remove_patterns = [
-        # 絵文字・記号
-        r'[🅹🅿🇯🇵★☆※◎○●▲△▼▽■□◆◇♦♢♠♣♥♡]',
-        r'[\u2600-\u26FF\u2700-\u27BF]',  # その他記号
-        
-        # 在庫・配送情報
-        r'\[.*?stock.*?\]',
-        r'\[.*?在庫.*?\]',
-        r'送料無料',
-        r'配送無料',
-        r'Free shipping',
-        
-        # 宣伝文句・品質表示
-        r'100% Authentic',
-        r'made in japan',
-        r'original',
-        r'Direct from japan',
-        r'Guaranteed authentic',
-        r'正規品',
-        r'本物',
-        r'新品',
-        r'未使用',
-        
-        # 販売者情報
-        r'@.*',
-        r'by.*store',
-        r'shop.*',
-        
-        # 冗長な説明
-        r'hair care liquid',
-        r'beauty product',
-        r'cosmetic',
-    ]
-    
-    # パターン除去
-    for pattern in remove_patterns:
-        text = re.sub(pattern, '', text, flags=re.IGNORECASE)
-    
-    # 地域情報の除去（先頭のみ）
-    text = re.sub(r'^(Japan|Global|Korean|China)\s+', '', text, flags=re.IGNORECASE)
-    
-    # 複数商品の分離（最初# sp_api_service.py - 既存機能完全統合版（GPT-4o日本語化統合）
+# sp_api_service.py - Prime+出品者情報統合フルコード版
 from sp_api.api import CatalogItems
 from sp_api.base import Marketplaces, SellingApiException
 import time
@@ -239,17 +189,6 @@ def load_brand_dict():
         "ASAHI": ["アサヒ", "asahi"],
         "MEIJI": ["明治", "meiji"],
         "MORINAGA": ["森永", "morinaga"],
-        
-        # 追加ブランド（brands.jsonからの主要ブランド）
-        "SONY": ["ソニー", "sony"],
-        "NINTENDO": ["任天堂", "nintendo"],
-        "APPLE": ["アップル", "apple"],
-        "SAMSUNG": ["サムスン", "samsung"],
-        "LG": ["エルジー", "lg"],
-        "SHARP": ["シャープ", "sharp"],
-        "TOSHIBA": ["東芝", "toshiba"],
-        "FUJITSU": ["富士通", "fujitsu"],
-        "NEC": ["エヌイーシー", "nec"],
     }
     
     print(f"📚 フォールバック辞書使用: {len(fallback_brands)}ブランド")
@@ -372,50 +311,318 @@ def extract_brand_and_quantity(text, brand_dict):
         "cleaned_text": cleaned_text
     }
 
-def calculate_enhanced_relevance_score(original_title, amazon_title, amazon_brand, extracted_info):
-    """改良された一致度計算（最大100点）"""
-    if not amazon_title:
-        return {"score": 0, "details": ["Amazon商品名なし"], "extracted_info": extracted_info}
-    
-    score = 0
-    details = []
-    
-    original_clean = original_title.lower()
-    amazon_clean = amazon_title.lower()
-    
-    # 1. 完全一致ボーナス（最大40点）
-    if original_clean == amazon_clean:
-        score += 40
-        details.append("完全一致: +40点")
-    elif original_clean in amazon_clean or amazon_clean in original_clean:
-        score += 25
-        details.append("部分完全一致: +25点")
-    
-    # 2. ブランド一致（最大25点）
-    if extracted_info.get("brand") and amazon_brand:
-        brand_lower = extracted_info["brand"].lower()
-        amazon_brand_lower = amazon_brand.lower()
+# ======================== Prime+出品者情報機能（新規追加） ========================
+
+def get_prime_and_seller_info(asin, credentials):
+    """
+    ASINからPrime状態と出品者情報を取得（Shopee出品特化）
+    """
+    try:
+        catalog_api = CatalogItems(
+            credentials=credentials,
+            marketplace=Marketplaces.JP
+        )
         
-        if brand_lower in amazon_brand_lower or amazon_brand_lower in brand_lower:
-            score += 25
-            details.append(f"ブランド一致({extracted_info['brand']}): +25点")
-        elif any(brand_var.lower() in amazon_brand_lower 
-                for brand_var in load_brand_dict().get(extracted_info["brand"], [])):
-            score += 20
-            details.append(f"ブランド部分一致({extracted_info['brand']}): +20点")
+        # 詳細商品情報を取得
+        response = catalog_api.get_catalog_item(
+            asin=asin,
+            marketplaceIds=[Marketplaces.JP.marketplace_id],
+            includedData=[
+                'summaries',
+                'attributes', 
+                'offers',
+                'images'
+            ]
+        )
+        
+        if not response.payload:
+            return {
+                'asin': asin,
+                'is_prime': False,
+                'seller_name': 'Unknown',
+                'seller_type': 'unknown',
+                'is_amazon_seller': False,
+                'is_official_seller': False,
+                'prime_status': 'データ取得失敗'
+            }
+        
+        item_data = response.payload
+        
+        # Prime情報と出品者情報を抽出
+        prime_seller_info = extract_prime_seller_details(item_data, asin)
+        
+        return prime_seller_info
+        
+    except Exception as e:
+        print(f"❌ Prime+出品者情報取得エラー ({asin}): {str(e)[:100]}...")
+        return {
+            'asin': asin,
+            'is_prime': False,
+            'seller_name': 'エラー',
+            'seller_type': 'error',
+            'is_amazon_seller': False,
+            'is_official_seller': False,
+            'prime_status': f'エラー: {str(e)[:50]}...'
+        }
+
+def extract_prime_seller_details(item_data, asin):
+    """
+    商品データからPrime・出品者詳細情報を抽出
+    """
+    result = {
+        'asin': asin,
+        'is_prime': False,
+        'seller_name': 'Unknown',
+        'seller_type': 'unknown',
+        'is_amazon_seller': False,
+        'is_official_seller': False,
+        'prime_status': '情報なし',
+        'brand_name': '',
+        'product_title': ''
+    }
     
-    # 3. 数量情報一致（最大15点）
-    if extracted_info.get("quantity"):
-        if extracted_info["quantity"] in amazon_title:
-            score += 15
-            details.append(f"数量一致({extracted_info['quantity']}): +15点")
+    # 基本商品情報
+    if 'summaries' in item_data and item_data['summaries']:
+        summary = item_data['summaries'][0]
+        result['product_title'] = summary.get('itemName', '')
+        result['brand_name'] = summary.get('brand', '')
+    
+    # オファー情報からPrime状態と出品者を確認
+    if 'offers' in item_data and item_data['offers']:
+        main_offer = item_data['offers'][0]  # メインオファー（通常は最も条件の良いもの）
+        
+        # Prime判定
+        prime_detected = detect_prime_status(main_offer)
+        result['is_prime'] = prime_detected['is_prime']
+        result['prime_status'] = prime_detected['status_detail']
+        
+        # 出品者情報抽出
+        seller_info = extract_seller_information(main_offer, result['brand_name'])
+        result.update(seller_info)
+    
+    return result
+
+def detect_prime_status(offer_data):
+    """
+    オファーデータからPrime状態を検出
+    """
+    prime_indicators = {
+        'is_prime': False,
+        'status_detail': '非Prime'
+    }
+    
+    try:
+        # 方法1: primeInformation直接確認
+        if 'primeInformation' in offer_data:
+            prime_info = offer_data['primeInformation']
+            if prime_info.get('isPrime', False):
+                prime_indicators['is_prime'] = True
+                prime_indicators['status_detail'] = 'Prime対応'
+                return prime_indicators
+        
+        # 方法2: deliveryInfo内のPrime情報確認  
+        if 'deliveryInfo' in offer_data:
+            delivery = offer_data['deliveryInfo']
+            if isinstance(delivery, dict):
+                # 配送オプションからPrime判定
+                if 'isPrimeMember' in delivery or 'primeEligible' in delivery:
+                    prime_indicators['is_prime'] = True
+                    prime_indicators['status_detail'] = 'Prime対応'
+                    return prime_indicators
+        
+        # 方法3: 配送情報のテキスト解析
+        if 'shippingCharges' in offer_data:
+            shipping = offer_data['shippingCharges']
+            if isinstance(shipping, list) and len(shipping) > 0:
+                shipping_text = str(shipping[0]).lower()
+                if 'prime' in shipping_text or '無料' in shipping_text:
+                    prime_indicators['is_prime'] = True
+                    prime_indicators['status_detail'] = 'Prime推定'
+                    return prime_indicators
+        
+        # 方法4: その他の配送関連情報
+        delivery_related_fields = ['fulfillmentChannel', 'shippingTime', 'availability']
+        for field in delivery_related_fields:
+            if field in offer_data:
+                field_value = str(offer_data[field]).lower()
+                if 'amazon' in field_value or 'prime' in field_value:
+                    prime_indicators['is_prime'] = True
+                    prime_indicators['status_detail'] = 'Prime推定（配送情報）'
+                    return prime_indicators
+        
+        prime_indicators['status_detail'] = '非Prime確認'
+        
+    except Exception as e:
+        prime_indicators['status_detail'] = f'Prime判定エラー: {str(e)[:30]}...'
+    
+    return prime_indicators
+
+def extract_seller_information(offer_data, brand_name):
+    """
+    出品者情報を抽出・分析
+    """
+    seller_info = {
+        'seller_name': 'Unknown',
+        'seller_type': 'unknown',
+        'is_amazon_seller': False,
+        'is_official_seller': False
+    }
+    
+    try:
+        # 出品者名の取得
+        seller_name = 'Unknown'
+        
+        # 方法1: merchantInfo から取得
+        if 'merchantInfo' in offer_data:
+            merchant = offer_data['merchantInfo']
+            if isinstance(merchant, dict):
+                seller_name = merchant.get('name', merchant.get('merchantName', 'Unknown'))
+        
+        # 方法2: その他のフィールドから取得
+        if seller_name == 'Unknown':
+            seller_fields = ['sellerName', 'merchant', 'seller', 'soldBy']
+            for field in seller_fields:
+                if field in offer_data and offer_data[field]:
+                    seller_name = str(offer_data[field])
+                    break
+        
+        seller_info['seller_name'] = seller_name
+        
+        # Amazon出品者判定
+        amazon_indicators = [
+            'amazon', 'amazon.co.jp', 'amazon japan', 'amazon.com',
+            'アマゾン', 'amazon jp', 'amazon inc'
+        ]
+        
+        seller_name_lower = seller_name.lower()
+        is_amazon = any(indicator in seller_name_lower for indicator in amazon_indicators)
+        seller_info['is_amazon_seller'] = is_amazon
+        
+        # 公式メーカー判定
+        is_official = False
+        if brand_name and len(brand_name) > 2:
+            is_official = check_official_manufacturer(seller_name, brand_name)
+        
+        seller_info['is_official_seller'] = is_official
+        
+        # 出品者タイプの決定
+        if is_amazon:
+            seller_info['seller_type'] = 'amazon'
+        elif is_official:
+            seller_info['seller_type'] = 'official_manufacturer'
         else:
-            # 数値部分のみ一致チェック
-            quantity_num = re.search(r'\d+', extracted_info["quantity"])
-            if quantity_num and quantity_num.group() in amazon_title:
-                score += 8
-                details.append(f"数量部分一致({quantity_num.group()}): +8点")
+            seller_info['seller_type'] = 'third_party'
+        
+    except Exception as e:
+        seller_info['seller_name'] = f'エラー: {str(e)[:30]}...'
+        seller_info['seller_type'] = 'error'
     
+    return seller_info
+
+def check_official_manufacturer(seller_name, brand_name):
+    """
+    公式メーカー判定ロジック
+    """
+    if not seller_name or not brand_name:
+        return False
+    
+    seller_lower = seller_name.lower().strip()
+    brand_lower = brand_name.lower().strip()
+    
+    # 完全一致チェック
+    if seller_lower == brand_lower:
+        return True
+    
+    # ブランド名が出品者名に含まれているかチェック
+    if brand_lower in seller_lower or seller_lower in brand_lower:
+        return True
+    
+    # 単語レベルでの一致チェック
+    seller_words = set(re.findall(r'\w+', seller_lower))
+    brand_words = set(re.findall(r'\w+', brand_lower))
+    
+    if brand_words and seller_words:
+        # 共通単語の割合
+        common_words = seller_words & brand_words
+        brand_coverage = len(common_words) / len(brand_words)
+        
+        # 50%以上の単語が一致すれば公式とみなす
+        if brand_coverage >= 0.5:
+            return True
+    
+    # 日本語ブランド特有のチェック
+    japanese_brand_patterns = [
+        (brand_lower.replace(' ', ''), seller_lower.replace(' ', '')),
+        (brand_lower.replace('-', ''), seller_lower.replace('-', '')),
+    ]
+    
+    for brand_pattern, seller_pattern in japanese_brand_patterns:
+        if brand_pattern in seller_pattern or seller_pattern in brand_pattern:
+            return True
+    
+    return False
+
+def calculate_shopee_suitability_score(product_info):
+    """
+    Shopee出品適性スコア計算（100点満点）
+    Prime(50) + 出品者(30) + 一致度(20)
+    """
+    score = 0
+    
+    # Prime評価（50点満点）
+    if product_info.get('is_prime', False):
+        score += 50
+    
+    # 出品者評価（30点満点）
+    seller_type = product_info.get('seller_type', 'unknown')
+    if seller_type == 'amazon':
+        score += 30
+    elif seller_type == 'official_manufacturer':
+        score += 25
+    elif seller_type == 'third_party':
+        score += 10
+    # unknown/errorは0点
+    
+    # 一致度評価（20点満点）
+    relevance_score = product_info.get('relevance_score', 0)
+    score += min(relevance_score * 0.2, 20)
+    
+    return min(int(score), 100)
+
+def determine_shopee_group(product_info):
+    """
+    最終的なShopeeグループ判定
+    """
+    is_prime = product_info.get('is_prime', False)
+    seller_type = product_info.get('seller_type', 'unknown')
+    relevance_score = product_info.get('relevance_score', 0)
+    asin = product_info.get('asin') or product_info.get('amazon_asin')
+    
+    # ASIN無しは除外
+    if not asin or asin == '':
+        return 'X'
+    
+    # Prime + Amazon/公式メーカー = グループA（最優秀）
+    if is_prime and seller_type in ['amazon', 'official_manufacturer']:
+        return 'A'
+    
+    # Prime + サードパーティ = グループB（良好）
+    elif is_prime and seller_type == 'third_party':
+        return 'B'
+    
+    # 非Prime（一致度で細分化）
+    elif not is_prime:
+        if relevance_score >= 70:
+            return 'C'  # 非Prime高一致度
+        else:
+            return 'X'  # 非Prime低一致度（除外）
+    
+    # その他（エラーなど）
+    else:
+        return 'X'
+
+# ======================== 既存機能との統合 ========================
+
 def split_japanese_words(text):
     """日本語の単語分割改善関数"""
     if not text:
@@ -777,8 +984,9 @@ def search_asin_with_prime_priority(title, max_results=5, **kwargs):
             return {
                 "search_status": "success",
                 "asin": best_item["asin"],
-                "title": best_item["title"],
-                "brand": best_item["brand"],
+                "amazon_asin": best_item["asin"],  # 互換性のため
+                "amazon_title": best_item["title"],
+                "amazon_brand": best_item["brand"],
                 "relevance_score": best_item["relevance_score"],
                 "relevance_details": best_item["relevance_details"],
                 "is_prime": best_item["is_prime"],
@@ -804,6 +1012,47 @@ def search_asin_with_prime_priority(title, max_results=5, **kwargs):
         error_msg = f"予期しないエラー: {str(e)}"
         print(f"   ❌ 失敗: {error_msg}")
         return {"search_status": "error", "error": error_msg, "extracted_info": extracted_info}
+
+def search_asin_with_enhanced_prime_seller(title, max_results=5):
+    """
+    Prime+出品者情報統合版ASIN検索（新機能）
+    """
+    credentials = get_credentials()
+    if not credentials:
+        return {
+            'search_status': 'auth_error',
+            'asin': '',
+            'amazon_asin': '',
+            'error_message': '認証情報が設定されていません'
+        }
+    
+    print(f"🔍 Prime+出品者情報統合検索: {title[:50]}...")
+    
+    # 基本のASIN検索実行
+    basic_result = search_asin_with_prime_priority(title, max_results)
+    
+    if basic_result.get("search_status") == "success":
+        asin = basic_result.get('asin') or basic_result.get('amazon_asin')
+        
+        if asin:
+            # Prime+出品者情報を追加取得
+            print(f"   📊 Prime+出品者詳細分析: {asin}")
+            prime_seller_info = get_prime_and_seller_info(asin, credentials)
+            
+            # 結果統合
+            basic_result.update(prime_seller_info)
+            
+            # Shopee出品適性スコア計算
+            shopee_score = calculate_shopee_suitability_score(basic_result)
+            basic_result['shopee_suitability_score'] = shopee_score
+            
+            # 最終グループ判定
+            shopee_group = determine_shopee_group(basic_result)
+            basic_result['shopee_group'] = shopee_group
+            
+            print(f"   ✅ Prime: {basic_result['is_prime']} | 出品者: {basic_result['seller_type']} | Shopee適性: {shopee_score}点 | グループ: {shopee_group}")
+    
+    return basic_result
 
 def process_batch_asin_search_with_ui(df, title_column='clean_title', limit=None):
     """リアルタイムUI付きバッチASIN検索（既存機能完全統合版）"""
@@ -876,8 +1125,8 @@ def process_batch_asin_search_with_ui(df, title_column='clean_title', limit=None
         if search_result.get("search_status") == "success":
             success_count += 1
             df_to_process.at[idx, 'amazon_asin'] = search_result['asin']
-            df_to_process.at[idx, 'amazon_title'] = search_result['title']
-            df_to_process.at[idx, 'amazon_brand'] = search_result.get('brand', '')
+            df_to_process.at[idx, 'amazon_title'] = search_result['amazon_title']
+            df_to_process.at[idx, 'amazon_brand'] = search_result.get('amazon_brand', '')
             df_to_process.at[idx, 'relevance_score'] = search_result['relevance_score']
             df_to_process.at[idx, 'is_prime'] = search_result.get('is_prime', False)
             df_to_process.at[idx, 'price'] = search_result.get('price', 'unknown')
@@ -894,7 +1143,7 @@ def process_batch_asin_search_with_ui(df, title_column='clean_title', limit=None
             df_to_process.at[idx, 'japanese_name'] = search_result.get('japanese_name', '')
             df_to_process.at[idx, 'llm_source'] = search_result.get('llm_source', '')
             
-            log_entry = f"✅ {idx + 1}/{total_items}: {search_result['asin']} - {search_result['title'][:50]}... (日本語: {search_result.get('japanese_name', 'なし')})"
+            log_entry = f"✅ {idx + 1}/{total_items}: {search_result['asin']} - {search_result['amazon_title'][:50]}... (日本語: {search_result.get('japanese_name', 'なし')})"
         else:
             error_count += 1
             df_to_process.at[idx, 'search_status'] = search_result.get('search_status', 'error')
@@ -933,9 +1182,73 @@ def process_batch_asin_search_with_ui(df, title_column='clean_title', limit=None
     
     return df_to_process
 
-def process_batch_asin_search(df, title_column='clean_title', limit=None):
-    """バッチASIN検索（下位互換性維持）"""
-    return process_batch_asin_search_with_ui(df, title_column, limit)
+# Prime+出品者情報込みバッチ処理（新機能）
+def process_batch_with_shopee_optimization(df, title_column='clean_title', limit=None):
+    """
+    Shopee最適化統合バッチ処理（Prime+出品者情報込み）
+    """
+    # 処理対象の決定
+    if limit:
+        df_to_process = df.head(limit).copy()
+    else:
+        df_to_process = df.copy()
+    
+    total_items = len(df_to_process)
+    
+    print(f"🚀 Shopee最適化バッチ処理開始: {total_items}件")
+    print(f"📊 新機能:")
+    print(f"   ✅ Prime+出品者情報取得")
+    print(f"   ✅ Shopee出品適性スコア計算")
+    print(f"   ✅ 4グループ自動分類（A/B/C/X）")
+    
+    credentials = get_credentials()
+    if not credentials:
+        st.error("❌ SP-API認証情報が設定されていません")
+        return None
+    
+    # UI要素の初期化
+    progress_bar = st.progress(0)
+    status_text = st.empty()
+    
+    results = []
+    
+    for idx, row in df_to_process.iterrows():
+        try:
+            # ステータス更新
+            progress = (idx + 1) / total_items
+            progress_bar.progress(progress)
+            status_text.text(f"処理中: {idx + 1}/{total_items} - {row[title_column][:30]}...")
+            
+            # Prime+出品者情報込みASIN検索
+            result = search_asin_with_enhanced_prime_seller(row[title_column])
+            
+            # 元データと結合
+            for key, value in row.items():
+                if key not in result:
+                    result[key] = value
+            
+            results.append(result)
+            
+            time.sleep(1)  # API制限対策
+            
+        except Exception as e:
+            # エラー時のデータ
+            error_result = dict(row)
+            error_result.update({
+                'search_status': 'error',
+                'asin': '',
+                'amazon_asin': '',
+                'error_message': str(e)
+            })
+            results.append(error_result)
+    
+    # 結果をDataFrameに変換
+    results_df = pd.DataFrame(results)
+    
+    progress_bar.progress(1.0)
+    status_text.text("✅ Shopee出品最適化バッチ処理完了！")
+    
+    return results_df
 
 def test_sp_api_connection():
     """SP-API接続テスト"""
@@ -968,7 +1281,7 @@ def test_sp_api_connection():
 
 # テスト実行
 if __name__ == "__main__":
-    print("=== SP-API Service 既存機能統合版テスト ===")
+    print("=== SP-API Service Prime+出品者情報統合版テスト ===")
     
     # 認証情報テスト
     result = test_sp_api_connection()
