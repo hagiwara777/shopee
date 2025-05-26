@@ -18,8 +18,7 @@ from sp_api_service import (
     get_credentials,
     load_brand_dict,
     advanced_product_name_cleansing,
-    extract_brand_and_quantity,
-    get_japanese_name_hybrid
+    extract_brand_and_quantity
 )
 import time
 
@@ -109,34 +108,12 @@ if st.sidebar.button("🧹 クレンジングテスト"):
 # 日本語化テスト
 st.sidebar.markdown("---")
 japanese_test_title = st.sidebar.text_input(
-    "GPT-4o日本語化テスト",
+    "日本語化テスト（単一商品検索で確認）",
     value="FANCL Mild Cleansing Oil 120ml",
-    help="英語商品名を入力してGPT-4o日本語化をテスト"
+    help="単一商品検索で日本語化結果を確認できます"
 )
 
-if st.sidebar.button("🤖 ハイブリッド日本語化テスト"):
-    with st.sidebar:
-        if openai_key or gemini_key:
-            with st.spinner("ハイブリッド変換中..."):
-                japanese_result, source = get_japanese_name_hybrid(japanese_test_title)
-                
-                st.write("**元の商品名:**")
-                st.text(japanese_test_title)
-                
-                st.write("**日本語化結果:**")
-                st.text(f"{japanese_result}")
-                
-                # ソース情報の表示
-                if source == "GPT-4o":
-                    st.success(f"🤖 GPT-4o成功")
-                elif source == "Gemini":
-                    st.info(f"🔮 Geminiバックアップ成功")
-                elif source == "Original":
-                    st.warning(f"⚠️ 両方失敗、元のタイトル使用")
-                else:
-                    st.error(f"❌ {source}")
-        else:
-            st.error("❌ OpenAI/Gemini API Keyが設定されていません")
+st.sidebar.info("💡 日本語化テストは「単一商品ASIN検索テスト」で確認できます")
 
 # 単一商品テスト
 st.sidebar.markdown("---")
@@ -160,8 +137,16 @@ if st.sidebar.button("🔍 ASIN検索テスト"):
                 
                 # 抽出情報表示
                 extracted = result.get('extracted_info', {})
+                
+                # 日本語化情報を優先表示
                 if result.get('japanese_name'):
-                    st.text(f"日本語化: {result['japanese_name']} ({result.get('llm_source', 'Unknown')})")
+                    if result['japanese_name'] != result.get('extracted_info', {}).get('cleaned_text', ''):
+                        st.text(f"日本語化: {result['japanese_name']} ({result.get('llm_source', 'Unknown')})")
+                    else:
+                        st.text(f"日本語化: 元タイトル使用 ({result.get('llm_source', 'Original')})")
+                else:
+                    st.text("日本語化: 未実行")
+                
                 if extracted.get('brand'):
                     st.text(f"抽出ブランド: {extracted['brand']}")
                 if extracted.get('quantity'):
