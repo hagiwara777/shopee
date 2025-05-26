@@ -1,4 +1,4 @@
-# asin_app.py - 既存機能統合対応版
+# asin_app.py - 既存機能統合対応版（完全修正版）
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -354,128 +354,146 @@ with tab1:
         st.success("✅ デモデータを生成しました")
         st.dataframe(demo_data.head())
 
-# データが存在する場合の処理
+# データが存在する場合の処理（修正版）
 if not st.session_state.processed_data.empty:
-    # グループ分類
-    groups = classify_confidence_groups(st.session_state.processed_data)
-    
-    # ステータス表示
-    status_data = calculate_batch_status(st.session_state.processed_data)
-    
-    # メトリクス表示
-    col1, col2, col3, col4, col5 = st.columns(5)
-    with col1:
-        st.metric("総データ数", status_data['total'])
-    with col2:
-        st.metric("処理済み", status_data['processed'])
-    with col3:
-        st.metric("成功", status_data['success'])
-    with col4:
-        st.metric("失敗", status_data['failed'])
-    with col5:
-        st.metric("成功率", f"{status_data['success_rate']:.1f}%")
-    
-    # 各タブでデータ表示
-    with tab2:
-        st.header("🔍 グループA（確実に使える）")
-        group_a = groups['group_a']
-        st.success(f"✅ {len(group_a)}件の確実に使えるASINが見つかりました")
+    try:
+        # グループ分類（修正版）
+        classified_df = classify_confidence_groups(st.session_state.processed_data)
         
-        if not group_a.empty:
-            display_columns = ['clean_title', 'japanese_name', 'llm_source', 'amazon_asin', 'amazon_title', 
-                             'amazon_brand', 'relevance_score', 'extracted_brand', 
-                             'extracted_quantity', 'relevance_details']
+        # 辞書形式でグループ分割
+        groups = {
+            'group_a': classified_df[classified_df['confidence_group'] == 'A'],
+            'group_b': classified_df[classified_df['confidence_group'] == 'B'], 
+            'group_c': classified_df[classified_df['confidence_group'] == 'C']
+        }
+        
+        # ステータス表示（修正版）
+        status_data = calculate_batch_status(classified_df)
+        
+        # メトリクス表示
+        col1, col2, col3, col4, col5 = st.columns(5)
+        with col1:
+            st.metric("総データ数", status_data['total'])
+        with col2:
+            st.metric("処理済み", status_data['processed'])
+        with col3:
+            st.metric("成功", status_data['success'])
+        with col4:
+            st.metric("失敗", status_data['failed'])
+        with col5:
+            st.metric("成功率", f"{status_data['success_rate']:.1f}%")
+        
+        # 各タブでデータ表示
+        with tab2:
+            st.header("🔍 グループA（確実に使える）")
+            group_a = groups['group_a']
+            st.success(f"✅ {len(group_a)}件の確実に使えるASINが見つかりました")
             
-            # 存在するカラムのみ表示
-            available_columns = [col for col in display_columns if col in group_a.columns]
-            st.dataframe(group_a[available_columns])
+            if not group_a.empty:
+                display_columns = ['clean_title', 'japanese_name', 'llm_source', 'amazon_asin', 'amazon_title', 
+                                 'amazon_brand', 'relevance_score', 'extracted_brand', 
+                                 'extracted_quantity', 'relevance_details']
+                
+                # 存在するカラムのみ表示
+                available_columns = [col for col in display_columns if col in group_a.columns]
+                st.dataframe(group_a[available_columns])
+                
+                # ASINリスト
+                if 'amazon_asin' in group_a.columns:
+                    asin_list = group_a['amazon_asin'].dropna().tolist()
+                    if asin_list:
+                        st.text_area(
+                            f"ASINリスト（{len(asin_list)}件）- コピー用",
+                            value='\n'.join(asin_list),
+                            height=100
+                        )
+        
+        with tab3:
+            st.header("⚠️ グループB（要確認）")
+            group_b = groups['group_b']
+            st.warning(f"⚠️ {len(group_b)}件の要確認ASINがあります")
             
-            # ASINリスト
-            if 'amazon_asin' in group_a.columns:
-                asin_list = group_a['amazon_asin'].dropna().tolist()
-                if asin_list:
-                    st.text_area(
-                        f"ASINリスト（{len(asin_list)}件）- コピー用",
-                        value='\n'.join(asin_list),
-                        height=100
+            if not group_b.empty:
+                display_columns = ['clean_title', 'japanese_name', 'llm_source', 'amazon_asin', 'amazon_title', 
+                                 'amazon_brand', 'relevance_score', 'extracted_brand', 
+                                 'extracted_quantity', 'relevance_details']
+                
+                available_columns = [col for col in display_columns if col in group_b.columns]
+                st.dataframe(group_b[available_columns])
+                
+                if 'amazon_asin' in group_b.columns:
+                    asin_list = group_b['amazon_asin'].dropna().tolist()
+                    if asin_list:
+                        st.text_area(
+                            f"ASINリスト（{len(asin_list)}件）- 要確認",
+                            value='\n'.join(asin_list),
+                            height=100
+                        )
+        
+        with tab4:
+            st.header("📝 グループC（参考情報）")
+            group_c = groups['group_c']
+            st.info(f"📝 {len(group_c)}件の参考ASINがあります")
+            
+            if not group_c.empty:
+                display_columns = ['clean_title', 'japanese_name', 'llm_source', 'amazon_asin', 'amazon_title', 
+                                 'amazon_brand', 'relevance_score', 'extracted_brand', 
+                                 'extracted_quantity', 'relevance_details']
+                
+                available_columns = [col for col in display_columns if col in group_c.columns]
+                st.dataframe(group_c[available_columns])
+        
+        with tab5:
+            st.header("📈 全データ")
+            st.info(f"📊 全{len(classified_df)}件のデータを表示")
+            st.dataframe(classified_df)
+            
+            # Excelエクスポート（修正版）
+            if st.button("📄 Excel形式でエクスポート"):
+                try:
+                    excel_buffer = export_to_excel_with_sheets(
+                        classified_df,
+                        groups
                     )
-    
-    with tab3:
-        st.header("⚠️ グループB（要確認）")
-        group_b = groups['group_b']
-        st.warning(f"⚠️ {len(group_b)}件の要確認ASINがあります")
-        
-        if not group_b.empty:
-            display_columns = ['clean_title', 'japanese_name', 'llm_source', 'amazon_asin', 'amazon_title', 
-                             'amazon_brand', 'relevance_score', 'extracted_brand', 
-                             'extracted_quantity', 'relevance_details']
-            
-            available_columns = [col for col in display_columns if col in group_b.columns]
-            st.dataframe(group_b[available_columns])
-            
-            if 'amazon_asin' in group_b.columns:
-                asin_list = group_b['amazon_asin'].dropna().tolist()
-                if asin_list:
-                    st.text_area(
-                        f"ASINリスト（{len(asin_list)}件）- 要確認",
-                        value='\n'.join(asin_list),
-                        height=100
+                    
+                    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                    filename = f"asin_matching_results_{timestamp}.xlsx"
+                    
+                    st.download_button(
+                        label="📥 結果をダウンロード",
+                        data=excel_buffer.getvalue(),
+                        file_name=filename,
+                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                     )
-    
-    with tab4:
-        st.header("📝 グループC（参考情報）")
-        group_c = groups['group_c']
-        st.info(f"📝 {len(group_c)}件の参考ASINがあります")
+                except Exception as e:
+                    st.error(f"エクスポートエラー: {str(e)}")
         
-        if not group_c.empty:
-            display_columns = ['clean_title', 'japanese_name', 'llm_source', 'amazon_asin', 'amazon_title', 
-                             'amazon_brand', 'relevance_score', 'extracted_brand', 
-                             'extracted_quantity', 'relevance_details']
+        with tab6:
+            st.header("❌ 検索失敗")
+            failed_data = classified_df[
+                classified_df['search_status'] != 'success'
+            ]
+            st.error(f"❌ {len(failed_data)}件の検索が失敗しました")
             
-            available_columns = [col for col in display_columns if col in group_c.columns]
-            st.dataframe(group_c[available_columns])
+            if not failed_data.empty:
+                display_columns = ['clean_title', 'japanese_name', 'llm_source', 'search_status', 'extracted_brand', 
+                                 'extracted_quantity', 'cleaned_title']
+                
+                available_columns = [col for col in display_columns if col in failed_data.columns]
+                st.dataframe(failed_data[available_columns])
+                
+                # 失敗理由の分析
+                if 'search_status' in failed_data.columns:
+                    failure_analysis = failed_data['search_status'].value_counts()
+                    st.subheader("📊 失敗理由分析")
+                    st.bar_chart(failure_analysis)
     
-    with tab5:
-        st.header("📈 全データ")
-        st.info(f"📊 全{len(st.session_state.processed_data)}件のデータを表示")
-        st.dataframe(st.session_state.processed_data)
-        
-        # Excelエクスポート
-        if st.button("📄 Excel形式でエクスポート"):
-            excel_buffer = export_to_excel_with_sheets(
-                st.session_state.processed_data,
-                groups
-            )
-            
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename = f"asin_matching_results_{timestamp}.xlsx"
-            
-            st.download_button(
-                label="📥 結果をダウンロード",
-                data=excel_buffer.getvalue(),
-                file_name=filename,
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            )
-    
-    with tab6:
-        st.header("❌ 検索失敗")
-        failed_data = st.session_state.processed_data[
-            st.session_state.processed_data['search_status'] != 'success'
-        ]
-        st.error(f"❌ {len(failed_data)}件の検索が失敗しました")
-        
-        if not failed_data.empty:
-            display_columns = ['clean_title', 'japanese_name', 'llm_source', 'search_status', 'extracted_brand', 
-                             'extracted_quantity', 'cleaned_title']
-            
-            available_columns = [col for col in display_columns if col in failed_data.columns]
-            st.dataframe(failed_data[available_columns])
-            
-            # 失敗理由の分析
-            if 'search_status' in failed_data.columns:
-                failure_analysis = failed_data['search_status'].value_counts()
-                st.subheader("📊 失敗理由分析")
-                st.bar_chart(failure_analysis)
+    except Exception as e:
+        st.error(f"❌ データ処理エラー: {str(e)}")
+        st.write("デバッグ情報:")
+        st.write(f"処理データ型: {type(st.session_state.processed_data)}")
+        st.write(f"データ形状: {st.session_state.processed_data.shape}")
+        st.write(f"カラム: {st.session_state.processed_data.columns.tolist()}")
 
 # 使用方法
 with st.expander("📖 使用方法", expanded=False):
