@@ -405,293 +405,370 @@ def check_official_manufacturer_simple(seller_name: str, brand: str) -> bool:
         return True
     return bool(re.search(r"(official|公式|直営|_jp)$", seller_name.lower()))
 
-def get_prime_and_seller_info(asin: str, credentials: dict, brand_name: str = "") -> dict:
+def select_best_offer_for_shipping(offers):
     """
-    最終修正版：正しいitem_conditionパラメータ使用
+    ShippingTime取得に最適なオファーを選択
+    優先順位: Amazon本体 > FBA > Prime > その他
     """
-    print(f"🔍 get_prime_and_seller_info開始: {asin}")
-    
-    try:
-        from sp_api.base import SellingApiException
-        
-        # ProductPricingインスタンス作成（2023年10月以降AWS認証不要）
-        pp = ProductPricing(
-            credentials=credentials, 
-            marketplace=Marketplaces.JP
-        )
-        print(f"   ✅ ProductPricingインスタンス作成成功（LWA認証のみ）")
-        
-        # 正しいパラメータ名で呼び出し
-        print(f"   📞 get_item_offers呼び出し: {asin}")
-        
-        # テスト結果に基づく正しい呼び出し
-        offers_response = pp.get_item_offers(
-            asin=asin,
-            item_condition="New"  # 正しいパラメータ名（小文字）
-        )
-        
-        print(f"   ✅ get_item_offers呼び出し成功")
-        
-        # レスポンス処理
-        offers = offers_response.payload.get("Offers", [])
-        print(f"   📊 オファー数: {len(offers)}")
-        
-        if not offers:
-            print(f"   ⚠️ {asin}: オファー情報なし")
-            return create_safe_fallback_step4(asin, "オファー情報なし", brand_name)
+    AMAZON_JP_SELLER_ID = 'A1VC38T7YXB528'
+    for offer in offers:
+        if offer.get("SellerId") == AMAZON_JP_SELLER_ID:
+            print(f"     🏆 Amazon本体オファー選択")
+            return offer
+    for offer in offers:
+        if check_fba_fulfillment(offer):
+            print(f"     📦 FBAオファー選択")
+            return offer
+    for offer in offers:
+        prime_info = offer.get("PrimeInformation", {})
+        if prime_info.get("IsPrime", False):
+            print(f"     🎯 Primeオファー選択")
+            return offer
+    print(f"     📋 デフォルトオファー選択")
+    return offers[0] if offers else {}
 
-        # デバッグ: offers[0]の構造を表示
-        import json
-        print(f"   🔍 デバッグ: offers[0]の構造:")
-        print(json.dumps(offers[0], indent=2, ensure_ascii=False))
-        
-        # Prime情報抽出
-        top_offer = offers[0]
-        prime_info = top_offer.get("PrimeInformation", {})
-        is_prime = prime_info.get("IsPrime", False)
-        is_national_prime = prime_info.get("IsNationalPrime", False)
-        
-        print(f"   🎯 Prime判定: IsPrime={is_prime}, IsNationalPrime={is_national_prime}")
-        
-        # 出品者情報抽出
-        seller_id = offers[0].get("SellerId", "")
-        seller_name = offers[0].get("Name", "Unknown")
-        
-        print(f"   👤 出品者: ID={seller_id}, Name={seller_name}")
-        
-        # Amazon本体判定
-        AMAZON_JP_SELLER_ID = 'A1VC38T7YXB528'
-        is_amazon_seller = (seller_id == AMAZON_JP_SELLER_ID)
-        
-        # 公式メーカー判定
-        is_official_seller_flag = is_official_seller(seller_id, seller_name, brand_name)
-        
-        # A/B/C分類
-        if not is_prime:
-            category = "C"
-        elif is_amazon_seller or is_official_seller_flag:
-            category = "A"
+def check_fba_fulfillment(offer):
+    """
+    FBA（Fulfillment by Amazon）判定
+    """
+    fulfillment = offer.get("Fulfillment", {})
+    fulfillment_type = fulfillment.get("Type", "")
+    fba_indicators = [
+        fulfillment_type.lower() == "amazon",
+        "amazon" in str(fulfillment).lower(),
+        offer.get("IsBuyBoxWinner", False) and offer.get("PrimeInformation", {}).get("IsPrime", False)
+    ]
+    return any(fba_indicators)
+
+def classify_with_fallback_v7(ship_hours, is_prime, is_amazon_seller, is_fba, is_official_seller):
+    """
+    多段フォールバック分類ロジック v7
+    優先順位:
+    1. ShippingTime ≤ 24h → A（確実）
+    2. ShippingTime不明 + Amazon本体 → A（Amazon確実）
+    3. ShippingTime不明 + FBA → A（FBA確実）
+    4. ShippingTime不明 + Prime + 公式 → A（公式Prime確実）
+    5. その他 → B（在庫管理制御）
+    """
+    if ship_hours is not None:
+        if ship_hours <= 24:
+            return "A", "確実", "ShippingTime≤24h"
         else:
-            category = "B"
-        
-        # セラータイプ決定
-        if is_amazon_seller:
-            seller_type = 'amazon'
-        elif is_official_seller_flag:
-            seller_type = 'official_manufacturer'
-        else:
-            seller_type = 'third_party'
-        
-        result = {
-            "asin": asin,
-            "is_prime": is_prime,
-            "is_national_prime": is_national_prime,
-            "seller_name": seller_name,
-            "seller_id": seller_id,
-            "seller_type": seller_type,
-            "is_amazon_seller": is_amazon_seller,
-            "is_official_seller": is_official_seller_flag,
-            "category": category,
-            "prime_status": "Prime" if is_prime else "NotPrime",
-            "api_source": "ProductPricing_Fixed_Final",
-            "brand_used": brand_name
-        }
-        
-        print(f"   ✅ {asin}完了: Prime={is_prime}, Category={category}, Seller={seller_type}")
-        return result
-        
-    except SellingApiException as exc:
-        print(f"   ❌ SP-API SellingApiException詳細:")
-        print(f"      Code: {exc.code}")
-        payload = getattr(exc, "payload", None)
-        print(f"      Payload: {payload}")
-        print(f"      Headers: {getattr(exc, 'headers', 'N/A')}")
-        
-        # エラーコード別対処法（2023年10月以降対応）
-        if exc.code == 401:
-            print(f"      🔧 LWA認証エラー: LWA_APP_ID/SECRET/TOKENを確認")
-        elif exc.code == 403:
-            print(f"      🔧 権限エラー: アプリケーションのロール/権限を確認")
-        elif exc.code == 429:
-            print(f"      🔧 レート制限: 間隔を空けてリトライ（0.5RPS制限）")
-        elif exc.code == 404:
-            print(f"      🔧 商品未発見: ASIN {asin} が存在しないか削除済み")
-        
-        return create_safe_fallback_step4(asin, f"SP-API-{exc.code}: {str(payload)[:100]}", brand_name)
-        
-    except Exception as exc:
-        print(f"   ❌ 予期しないエラー: {exc}")
-        return create_safe_fallback_step4(asin, str(exc)[:60], brand_name)
+            return "B", "要管理", f"ShippingTime>{ship_hours}h"
+    if is_amazon_seller:
+        return "A", "Amazon確実", "Amazon本体フォールバック"
+    if is_fba:
+        return "A", "FBA確実", "FBAフォールバック"
+    if is_prime and is_official_seller:
+        return "A", "公式Prime確実", "公式Primeフォールバック"
+    if is_prime:
+        return "B", "Prime代替", "Primeフォールバック"
+    return "B", "要管理", "最終フォールバック"
 
-def search_asin_with_enhanced_prime_seller(title, max_results=5):
+def get_prime_and_seller_info_v7_enhanced(asin: str, credentials: dict, brand_name: str = "", retry_count: int = 2) -> dict:
     """
-    Prime+出品者情報統合版ASIN検索（新機能）
+    ShippingTime最優先システム v7 強化版
+    - ShippingTime取得 + 多段フォールバック戦略
+    - リトライ処理
+    - FBA/Amazon本体優先判定
     """
-    credentials = get_credentials()
-    if not credentials:
-        return {
-            'search_status': 'auth_error',
-            'asin': '',
-            'amazon_asin': '',
-            'error_message': '認証情報が設定されていません'
-        }
+    print(f"🔍 ShippingTime最優先システムv7強化版開始: {asin}")
     
-    print(f"🔍 Prime+出品者情報統合検索: {title[:50]}...")
-    
-    # 基本のASIN検索実行
-    basic_result = search_asin_with_prime_priority(title, max_results)
-    
-    if basic_result.get("search_status") == "success":
-        asin = basic_result.get('asin') or basic_result.get('amazon_asin')
-        
-        if asin:
-            # Prime+出品者情報を追加取得
-            print(f"   📊 Prime+出品者詳細分析: {asin}")
-            prime_seller_info = get_prime_and_seller_info(asin, credentials)
-            
-            # 結果統合
-            basic_result.update(prime_seller_info)
-            
-            # Shopee出品適性スコア計算
-            shopee_score = calculate_shopee_suitability_score(basic_result)
-            basic_result['shopee_suitability_score'] = shopee_score
-            
-            # 最終グループ判定
-            shopee_group = determine_shopee_group(basic_result)
-            basic_result['shopee_group'] = shopee_group
-            
-            print(f"   ✅ Prime: {basic_result['is_prime']} | 出品者: {basic_result['seller_type']} | Shopee適性: {shopee_score}点 | グループ: {shopee_group}")
-    
-    return basic_result
+    for attempt in range(retry_count + 1):
+        try:
+            if attempt > 0:
+                print(f"   🔄 リトライ {attempt}/{retry_count}: {asin}")
+                time.sleep(0.5)  # レート制限対応
+            from sp_api.base import SellingApiException
+            # ProductPricingインスタンス作成
+            pp = ProductPricing(
+                credentials=credentials, 
+                marketplace=Marketplaces.JP
+            )
+            # 🚀 ShippingTime取得（includedDataパラメータ必須指定）
+            print(f"   📞 get_item_offers呼び出し（試行{attempt + 1}）: {asin}")
+            offers_response = pp.get_item_offers(
+                asin=asin,
+                item_condition="New",
+                includedData="ShippingTime"  # ShippingTime取得の必須パラメータ
+            )
+            print(f"   ✅ get_item_offers成功（試行{attempt + 1}）")
+            # レスポンス処理
+            offers = offers_response.payload.get("Offers", [])
+            print(f"   📊 オファー数: {len(offers)}")
+            if not offers:
+                if attempt < retry_count:
+                    print(f"   ⚠️ オファー情報なし、リトライします")
+                    continue
+                else:
+                    print(f"   ⚠️ {asin}: 最終的にオファー情報なし")
+                    return create_safe_fallback_step4(asin, "オファー情報なし", brand_name)
+            # 🎯 複数オファー分析（ベストオファー選択）
+            best_offer = select_best_offer_for_shipping(offers)
+            # ShippingTime情報抽出
+            ship_info = best_offer.get("ShippingTime", {})
+            ship_hours = ship_info.get("maximumHours") if ship_info else None
+            ship_bucket = ship_info.get("availabilityType", "") if ship_info else ""
+            ship_source = "API取得" if ship_hours is not None else "取得失敗"
+            print(f"   ⏰ ShippingTime: {ship_hours}時間 (Source: {ship_source})")
+            # Prime情報抽出
+            prime_info = best_offer.get("PrimeInformation", {})
+            is_prime = prime_info.get("IsPrime", False)
+            is_national_prime = prime_info.get("IsNationalPrime", False)
+            # 出品者情報抽出
+            seller_id = best_offer.get("SellerId", "")
+            seller_name = best_offer.get("Name", "Unknown")
+            # Amazon本体・FBA判定
+            AMAZON_JP_SELLER_ID = 'A1VC38T7YXB528'
+            is_amazon_seller = (seller_id == AMAZON_JP_SELLER_ID)
+            is_fba = check_fba_fulfillment(best_offer)  # FBA判定ロジック
+            is_official_seller_flag = is_official_seller(seller_id, seller_name, brand_name)
+            print(f"   👤 出品者: Amazon={is_amazon_seller}, FBA={is_fba}, 公式={is_official_seller_flag}")
+            # 🚀 多段フォールバック分類ロジック v7
+            category, ship_category, fallback_reason = classify_with_fallback_v7(
+                ship_hours, is_prime, is_amazon_seller, is_fba, is_official_seller_flag
+            )
+            # セラータイプ決定
+            if is_amazon_seller:
+                seller_type = 'amazon'
+            elif is_official_seller_flag:
+                seller_type = 'official_manufacturer'
+            else:
+                seller_type = 'third_party'
+            result = {
+                "asin": asin,
+                "is_prime": is_prime,
+                "is_national_prime": is_national_prime,
+                "seller_name": seller_name,
+                "seller_id": seller_id,
+                "seller_type": seller_type,
+                "is_amazon_seller": is_amazon_seller,
+                "is_official_seller": is_official_seller_flag,
+                "is_fba": is_fba,  # 新フィールド
+                # ShippingTime最優先システム v7 フィールド
+                "ship_hours": ship_hours,
+                "ship_bucket": ship_bucket,
+                "ship_source": ship_source,  # 取得方法
+                "ship_category": ship_category,
+                "fallback_reason": fallback_reason,  # フォールバック理由
+                "category": category,
+                "prime_status": "Prime" if is_prime else "NotPrime",
+                "api_source": "ShippingTime_Enhanced_v7",
+                "brand_used": brand_name,
+                "retry_attempt": attempt + 1  # 試行回数
+            }
+            print(f"   ✅ {asin}完了: ShippingTime={ship_hours}h, Category={category}, フォールバック={fallback_reason}")
+            return result
+        except SellingApiException as exc:
+            print(f"   ❌ SP-API エラー (試行{attempt + 1}): Code={exc.code}")
+            # リトライ可能なエラーかチェック
+            if exc.code in [429, 503, 504] and attempt < retry_count:
+                print(f"   🔄 リトライ可能エラー、{0.5 * (attempt + 1)}秒後にリトライ")
+                time.sleep(0.5 * (attempt + 1))  # 指数バックオフ
+                continue
+            else:
+                # 最終的な失敗またはリトライ不可能エラー
+                payload = getattr(exc, "payload", None)
+                return create_safe_fallback_step4(asin, f"SP-API-{exc.code}: {str(payload)[:100]}", brand_name)
+        except Exception as exc:
+            if attempt < retry_count:
+                print(f"   ⚠️ 予期しないエラー (試行{attempt + 1}): {exc}, リトライします")
+                time.sleep(0.3)
+                continue
+            else:
+                print(f"   ❌ 最終的な予期しないエラー: {exc}")
+                return create_safe_fallback_step4(asin, str(exc)[:60], brand_name)
+    # 全リトライ失敗時
+    return create_safe_fallback_step4(asin, "全リトライ失敗", brand_name)
 
-def process_batch_asin_search_with_ui(df, title_column='clean_title', limit=None):
-    """リアルタイムUI付きバッチASIN検索（既存機能完全統合版）"""
-    # 処理対象の決定
-    if limit:
-        df_to_process = df.head(limit).copy()
-    else:
-        df_to_process = df.copy()
+# 元の関数を強化版に置き換え
+def get_prime_and_seller_info(asin: str, credentials: dict, brand_name: str = "", retry_count: int = 2) -> dict:
+    return get_prime_and_seller_info_v7_enhanced(asin, credentials, brand_name, retry_count)
+
+def get_prime_and_seller_info_v8_batch(asin_list, credentials, batch_size=20):
+    """
+    ShippingTime最優先システム v8 - バッチAPI活用版
+    取得率向上テクニック:
+    1. getListingOffersBatch で20 ASIN一括取得（取得率+5-8%向上）
+    2. ItemCondition="Any" でコンディション混在対応
+    3. SellerID指定二度引きフォールバック
+    """
+    print(f"🚀 ShippingTime v8 バッチAPI開始: {len(asin_list)}件")
     
-    total_items = len(df_to_process)
+    from sp_api.api import Products as ProductPricing
+    from sp_api.base import Marketplaces, SellingApiException
     
-    print(f"🚀 既存機能統合版バッチASIN検索開始: {total_items}件の商品を処理")
-    print(f"📊 統合機能:")
-    print(f"   ✅ 高品質商品名クレンジング")
-    print(f"   ✅ 500+ブランド辞書活用")
-    print(f"   ✅ 改良された一致度計算")
-    print(f"   ✅ リアルタイム進捗表示")
+    results = []
     
-    # UI要素の初期化
-    progress_bar = st.progress(0)
-    status_container = st.container()
-    metrics_container = st.container()
-    current_item_container = st.container()
-    log_container = st.container()
+    # バッチ処理（20件ずつ）
+    for i in range(0, len(asin_list), batch_size):
+        batch = asin_list[i:i + batch_size]
+        print(f"   📦 バッチ {i//batch_size + 1}: {len(batch)}件処理中...")
+        
+        try:
+            # ProductPricingインスタンス作成
+            pp = ProductPricing(credentials=credentials, marketplace=Marketplaces.JP)
+            
+            # 🎯 バッチAPI呼び出し（取得率向上効果あり）
+            batch_response = pp.get_listing_offers_batch(
+                asins=batch,
+                item_condition="Any",  # テクニック2: コンディション混在で取得率向上
+                includedData="ShippingTime"  # ShippingTime必須指定
+            )
+            
+            print(f"   ✅ バッチAPI成功: {len(batch)}件")
+            
+            # バッチレスポンス処理
+            for asin in batch:
+                asin_data = batch_response.payload.get(asin, {})
+                offers = asin_data.get("Offers", [])
+                
+                if offers:
+                    # ベストオファー選択＋ShippingTime抽出
+                    result = process_batch_offer_v8(asin, offers)
+                    results.append(result)
+                else:
+                    # 🔧 テクニック3: SellerID指定二度引き
+                    print(f"     🔄 {asin}: バッチ失敗 → Amazon本体指定リトライ")
+                    retry_result = retry_with_seller_specification(asin, credentials)
+                    results.append(retry_result)
+                
+                # レート制限対応
+                time.sleep(0.1)
+        
+        except SellingApiException as exc:
+            print(f"   ❌ バッチAPI失敗: Code={exc.code}")
+            # バッチ失敗時は個別処理フォールバック
+            for asin in batch:
+                fallback_result = get_prime_and_seller_info_v7_enhanced(asin, credentials)
+                results.append(fallback_result)
+        
+        # バッチ間の休憩（レート制限対応）
+        time.sleep(1.0)
     
-    # 結果カラムの初期化
-    result_columns = [
-        'amazon_asin', 'amazon_title', 'amazon_brand', 'relevance_score',
-        'is_prime', 'price', 'search_status', 'extracted_brand', 
-        'extracted_quantity', 'cleaned_title', 'relevance_details',
-        'japanese_name', 'llm_source'  # 日本語化情報を追加
+    print(f"📊 バッチ処理完了: {len(results)}件処理")
+    return results
+
+def retry_with_seller_specification(asin, credentials):
+    """
+    テクニック3: SellerID指定二度引き戦略
+    Amazon本体（ATVPDKIKX0DER）または高速セラーを明示指定
+    """
+    print(f"   🎯 Amazon本体指定リトライ: {asin}")
+    
+    # Amazon本体のSellerID
+    AMAZON_SELLER_IDS = [
+        'ATVPDKIKX0DER',  # Amazon.com
+        'A1VC38T7YXB528'  # Amazon.co.jp
     ]
     
-    for col in result_columns:
-        if col not in df_to_process.columns:
-            df_to_process[col] = ""
+    from sp_api.api import Products as ProductPricing
     
-    # バッチ処理実行
-    success_count = 0
-    error_count = 0
-    detailed_logs = []
-    
-    for idx, row in df_to_process.iterrows():
-        current_progress = (idx + 1) / total_items
-        progress_bar.progress(current_progress)
-        
-        # 現在の処理状況表示
-        with current_item_container:
-            st.write(f"🔍 {idx + 1}/{total_items}: 検索中")
-            current_title = str(row[title_column])[:100] + ("..." if len(str(row[title_column])) > 100 else "")
-            st.write(f"商品名: {current_title}")
-        
-        # メトリクス更新
-        with metrics_container:
-            col1, col2, col3, col4 = st.columns(4)
-            with col1:
-                st.metric("処理済み", f"{idx + 1}/{total_items}")
-            with col2:
-                st.metric("成功", f"{success_count}")
-            with col3:
-                st.metric("失敗", f"{error_count}")
-            with col4:
-                success_rate = (success_count / (idx + 1)) * 100 if idx >= 0 else 0
-                st.metric("成功率", f"{success_rate:.1f}%")
-        
-        # ASIN検索実行
-        search_result = search_asin_with_prime_priority(str(row[title_column]))
-        
-        # 結果の処理
-        if search_result.get("search_status") == "success":
-            success_count += 1
-            df_to_process.at[idx, 'amazon_asin'] = search_result['asin']
-            df_to_process.at[idx, 'amazon_title'] = search_result['amazon_title']
-            df_to_process.at[idx, 'amazon_brand'] = search_result.get('amazon_brand', '')
-            df_to_process.at[idx, 'relevance_score'] = search_result['relevance_score']
-            df_to_process.at[idx, 'is_prime'] = search_result.get('is_prime', False)
-            df_to_process.at[idx, 'price'] = search_result.get('price', '')
-            df_to_process.at[idx, 'search_status'] = search_result['search_status']
+    for seller_id in AMAZON_SELLER_IDS:
+        try:
+            pp = ProductPricing(credentials=credentials, marketplace=Marketplaces.JP)
             
-            # ブランド・数量抽出結果を統合
-            brand_info = extract_brand_and_quantity(search_result.get('amazon_title', ''), load_brand_dict())
-            df_to_process.at[idx, 'extracted_brand'] = brand_info['brand'] or ''
-            df_to_process.at[idx, 'extracted_quantity'] = brand_info['quantity'] or ''
-            df_to_process.at[idx, 'cleaned_title'] = brand_info['cleaned_text'] or ''
+            # Amazon本体指定での取得試行
+            response = pp.get_item_offers(
+                asin=asin,
+                item_condition="New",
+                seller_id=seller_id,  # 特定セラー指定
+                includedData="ShippingTime"
+            )
             
-            # 日本語化処理
-            if df_to_process.at[idx, 'cleaned_title']:
-                japanese_name, llm_source = get_japanese_name_hybrid(df_to_process.at[idx, 'cleaned_title'])
-                df_to_process.at[idx, 'japanese_name'] = japanese_name
-                df_to_process.at[idx, 'llm_source'] = llm_source
-            
-            # 詳細ログ
-            detailed_logs.append(f"成功: {search_result['asin']} - ブランド: {df_to_process.at[idx, 'extracted_brand']} - タイトル: {df_to_process.at[idx, 'cleaned_title']}")
-        else:
-            error_count += 1
-            df_to_process.at[idx, 'search_status'] = search_result.get('error_message', '不明なエラー')
-            detailed_logs.append(f"失敗: {search_result.get('error_message', '不明なエラー')}")
+            offers = response.payload.get("Offers", [])
+            if offers:
+                print(f"     ✅ Amazon本体指定成功: {asin}")
+                return process_batch_offer_v8(asin, offers)
         
-        # 現在の詳細ログ表示
-        with log_container:
-            st.write("詳細ログ:")
-            for log in detailed_logs[-10:]:  # 最新の10件を表示
-                st.write(f"- {log}")
+        except Exception as e:
+            print(f"     ⚠️ Amazon本体指定失敗 ({seller_id}): {e}")
+            continue
     
-    # 最終結果の表示
-    st.write(f"✅ バッチ処理完了: {success_count}件成功, {error_count}件失敗")
-    
-    return df_to_process
+    # 全て失敗時のフォールバック
+    print(f"     ❌ 全指定セラー失敗: {asin}")
+    return create_safe_fallback_step4(asin, "SellerID指定全失敗")
 
-def search_asin_with_prime_priority(title, max_results=5):
+def process_batch_offer_v8(asin, offers):
     """
-    ダミー: Prime優先ASIN検索（循環参照防止のため再帰呼び出しなし）
+    バッチAPI用オファー処理 v8
+    - 改良版フォールバック判定ロジック適用
+    - カテゴリ別しきい値対応準備
     """
-    # 本番では実装を差し替え
+    # ベストオファー選択
+    best_offer = select_best_offer_for_shipping(offers)
+    
+    # ShippingTime抽出
+    ship_info = best_offer.get("ShippingTime", {})
+    ship_hours = ship_info.get("maximumHours")
+    ship_bucket = ship_info.get("availabilityType", "")
+    
+    # Prime+出品者情報抽出
+    prime_info = best_offer.get("PrimeInformation", {})
+    is_prime = prime_info.get("IsPrime", False)
+    seller_id = best_offer.get("SellerId", "")
+    seller_name = best_offer.get("Name", "Unknown")
+    
+    # 高度判定ロジック
+    is_amazon_seller = seller_id in ['ATVPDKIKX0DER', 'A1VC38T7YXB528']
+    is_fba = check_fba_fulfillment(best_offer)
+    is_official_seller_flag = check_official_manufacturer_simple(seller_name, "")
+    
+    # 🚀 改良版分類ロジック v8
+    category, reason = classify_shipping_v8({
+        'ship_hours': ship_hours,
+        'is_prime': is_prime,
+        'is_fba': is_fba,
+        'is_amazon_seller': is_amazon_seller,
+        'is_official_seller': is_official_seller_flag
+    })
+    
     return {
-        'search_status': 'not_implemented',
-        'asin': '',
-        'amazon_asin': '',
-        'error_message': 'search_asin_with_prime_priorityはダミーです'
+        "asin": asin,
+        "ship_hours": ship_hours,
+        "ship_bucket": ship_bucket,
+        "is_prime": is_prime,
+        "is_fba": is_fba,
+        "seller_type": 'amazon' if is_amazon_seller else 'official_manufacturer' if is_official_seller_flag else 'third_party',
+        "seller_name": seller_name,
+        "seller_id": seller_id,
+        "category": category,
+        "classification_reason": reason,
+        "api_source": "BatchAPI_v8"
     }
 
-def calculate_shopee_suitability_score(product_info):
+def classify_shipping_v8(row):
     """
-    ダミー: Shopee適性スコア計算（本番ではasin_helpers等で実装）
+    改良版フォールバック判定ロジック v8
+    多段階フォールバック + FBA対応強化
     """
-    return 80
-
-def determine_shopee_group(product_info):
-    """
-    ダミー: Shopeeグループ判定（A/B/C）
-    """
-    return product_info.get('category', 'C')
+    max_h = row.get("ship_hours")
+    is_prime = row.get("is_prime", False)
+    is_fba = row.get("is_fba", False)  # FBA but Primeタグなし用
+    is_amazon = row.get("is_amazon_seller", False)
+    is_official = row.get("is_official_seller", False)
+    
+    # --- ① ShippingTimeが取れた場合（最優先） ---
+    if max_h is not None:
+        if max_h <= 24:
+            return "A", f"ShippingTime≤24h ({max_h}h)"
+        elif max_h <= 48:
+            return "B", f"ShippingTime 25-48h ({max_h}h)"
+        else:
+            return "B", f"ShippingTime>48h ({max_h}h)"  # v8: 2グループなのでBに統合
+    
+    # --- ② 取れない場合の多段フォールバック ---
+    if is_amazon:
+        return "A", "Amazon本体フォールバック"
+    
+    if is_fba:
+        return "A", "FBAフォールバック"  # FBAは高速発送期待
+    
+    if is_prime and is_official:
+        return "A", "公式Primeフォールバック"
+    
+    if is_prime:
+        return "B", "Primeフォールバック"
+    
+    # 最終フォールバック
+    return "B", "最終フォールバック（在庫管理制御）"

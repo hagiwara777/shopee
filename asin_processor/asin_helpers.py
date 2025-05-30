@@ -311,93 +311,61 @@ if __name__ == "__main__":
     test_df, report = test_prime_priority_system()
     print("\n🎯 Prime最優先システムテスト完了")
 
-# asin_helpers.py - 3グループ対応完全版（Prime+出品者情報統合+個別承認システム）
-import pandas as pd
-import numpy as np
-from datetime import datetime
-import re
+# ======================== ShippingTime最優先システム v7（2グループ版） ========================
 
-# ======================== Shopee出品特化機能（3グループ版） ========================
-
-def classify_for_shopee_listing(df):
+def shopee_classify_shipping_simple(row):
     """
-    Shopee出品特化型分類（3グループ版）
-    
-    グループA: Prime + Amazon/公式メーカー（最優秀 - 即座に出品可能）
-    グループB: Prime + サードパーティ（良好 - 確認後出品推奨）
-    グループC: 非Prime（参考 - 慎重検討）
+    シンプル2グループ分類 - ShippingTime最優先システム v7
+    A: 24時間以内発送（DTS規約クリア確実）
+    B: それ以外（在庫管理で制御）
+    """
+    ship_hours = row.get("ship_hours")
+    if ship_hours is not None:
+        if ship_hours <= 24:
+            return "A"
+        else:
+            return "B"
+    else:
+        return "B"
+
+def classify_for_shopee_listing_v7(df):
+    """
+    ShippingTime最優先システム v7 - 2グループ分類版
+    グループA: 24時間以内発送（DTS規約クリア確実）
+    グループB: それ以外（在庫管理で制御）
     """
     df = df.copy()
-    
-    print("🎯 Shopee出品特化型分類開始（3グループ版）...")
-    
-    # 必要なカラムの確認・補完
+    print("🚀 ShippingTime最優先システム v7 開始（2グループ版）...")
     required_columns = {
+        'ship_hours': None,
+        'ship_bucket': '',
         'is_prime': False,
         'seller_type': 'unknown',
         'shopee_suitability_score': 0,
         'relevance_score': 0
     }
-    
     for col, default_val in required_columns.items():
         if col not in df.columns:
             df[col] = default_val
-    
-    # ASIN関連カラムの統一
-    asin_column = None
-    for col in ['asin', 'amazon_asin', 'ASIN']:
-        if col in df.columns:
-            asin_column = col
-            break
-    
-    if asin_column is None:
-        df['asin'] = ''
-        asin_column = 'asin'
-    
-    # ASINの存在チェック
-    df['has_valid_asin'] = df[asin_column].notna() & (df[asin_column] != '') & (df[asin_column] != 'N/A')
-    
-    def shopee_classify_3groups(row):
-        """3グループShopee出品特化分類ロジック"""
-        seller_name = str(row.get('seller_name', ''))
-        if '推定' in seller_name:
-            return 'B'
-        is_prime = row.get('is_prime', False)
-        seller_type = row.get('seller_type', 'unknown')
-        # 🏆 グループA: Prime + Amazon/公式メーカー（最優秀）
-        if is_prime and seller_type in ['amazon', 'official_manufacturer']:
-            return 'A'
-        # 🟡 グループB: Prime + サードパーティ（良好）
-        elif is_prime and seller_type == 'third_party':
-            return 'B'
-        # 🔵 グループC: 非Prime（すべて含める）
-        else:
-            return 'C'
-    
-    # 分類実行
-    df['shopee_group'] = df.apply(shopee_classify_3groups, axis=1)
-    
-    # 優先度設定（グループ内ソート用）
-    priority_map = {'A': 1, 'B': 2, 'C': 3}
+    df['shopee_group'] = df.apply(shopee_classify_shipping_simple, axis=1)
+    priority_map = {'A': 1, 'B': 2}
     df['group_priority'] = df['shopee_group'].map(priority_map)
-    
-    # ソート：グループ優先度 → Shopee適性スコア降順 → 一致度降順
     df = df.sort_values(
-        by=['group_priority', 'shopee_suitability_score', 'relevance_score'], 
-        ascending=[True, False, False]
+        by=['group_priority', 'ship_hours', 'shopee_suitability_score'],
+        ascending=[True, True, False]
     ).reset_index(drop=True)
-    
-    # 統計情報出力
     group_stats = df['shopee_group'].value_counts().sort_index()
     total_items = len(df)
-    
-    print(f"📊 Shopee出品特化分類結果（3グループ版）:")
-    print(f"   🏆 グループA（Prime+Amazon/公式）: {group_stats.get('A', 0)}件 - 即座に出品可能")
-    print(f"   🟡 グループB（Prime+サードパーティ）: {group_stats.get('B', 0)}件 - 確認後出品推奨")
-    print(f"   🔵 グループC（非Prime）: {group_stats.get('C', 0)}件 - 慎重検討")
-    print(f"   📈 総商品数: {total_items}件（全て出品候補）")
-    
-    # 品質統計
+    print(f"📊 ShippingTime最優先分類結果（2グループ版）:")
+    print(f"   🏆 グループA（24時間以内発送）: {group_stats.get('A', 0)}件 - DTS規約クリア確実")
+    print(f"   📦 グループB（それ以外）: {group_stats.get('B', 0)}件 - 在庫管理で制御")
+    print(f"   📈 総商品数: {total_items}件")
+    if 'ship_hours' in df.columns:
+        ship_available = len(df[df['ship_hours'].notna()])
+        ship_rate = (ship_available / total_items * 100) if total_items > 0 else 0
+        avg_ship_hours = df[df['ship_hours'].notna()]['ship_hours'].mean() if ship_available > 0 else 0
+        print(f"   ⏰ ShippingTime取得率: {ship_rate:.1f}% ({ship_available}/{total_items})")
+        print(f"   ⏰ 平均発送時間: {avg_ship_hours:.1f}時間")
     if total_items > 0:
         avg_shopee_score = df['shopee_suitability_score'].mean()
         avg_relevance = df['relevance_score'].mean()
@@ -405,30 +373,16 @@ def classify_for_shopee_listing(df):
         print(f"   🎯 平均Shopee適性: {avg_shopee_score:.1f}点")
         print(f"   🎯 平均一致度: {avg_relevance:.1f}%")
         print(f"   🎯 Prime率: {prime_rate:.1f}%")
-    
-    # グループ別詳細統計
-    for group in ['A', 'B', 'C']:
-        group_df = df[df['shopee_group'] == group]
-        if len(group_df) > 0:
-            group_avg_score = group_df['shopee_suitability_score'].mean()
-            group_avg_relevance = group_df['relevance_score'].mean()
-            group_prime_rate = len(group_df[group_df['is_prime'] == True]) / len(group_df) * 100
-            print(f"     グループ{group}: Shopee適性{group_avg_score:.1f}点 | 一致度{group_avg_relevance:.1f}% | Prime率{group_prime_rate:.1f}%")
-    
     return df
 
-def calculate_batch_status_shopee(df):
+def calculate_batch_status_shopee_v7(df):
     """
-    Shopee特化バッチ処理ステータス計算（3グループ版）
+    ShippingTime最優先システム v7 バッチ処理ステータス計算（2グループ版）
     """
     total_items = len(df)
     if total_items == 0:
-        return create_empty_status_3groups()
-    
-    # ASIN関連カラムの統一
+        return create_empty_status_2groups()
     asin_column = get_asin_column(df)
-    
-    # 成功・失敗カウント
     if 'search_status' in df.columns:
         success_count = len(df[df['search_status'] == 'success'])
         failed_count = len(df[df['search_status'].isin(['error', 'no_results'])])
@@ -438,108 +392,374 @@ def calculate_batch_status_shopee(df):
     else:
         success_count = 0
         failed_count = total_items
-    
     processed_count = success_count + failed_count
     success_rate = (success_count / total_items * 100) if total_items > 0 else 0
-    
-    # 3グループ統計
-    if 'shopee_group' in df.columns:
-        group_counts = df['shopee_group'].value_counts()
-        stats_data = {
-            'group_a': group_counts.get('A', 0),
-            'group_b': group_counts.get('B', 0),
-            'group_c': group_counts.get('C', 0)
-        }
-    else:
-        stats_data = {'group_a': 0, 'group_b': 0, 'group_c': 0}
-    
-    # Prime統計
+    group_a = len(df[df['shopee_group'] == 'A']) if 'shopee_group' in df.columns else 0
+    group_b = len(df[df['shopee_group'] == 'B']) if 'shopee_group' in df.columns else 0
+    ship_available = len(df[df['ship_hours'].notna()]) if 'ship_hours' in df.columns else 0
+    ship_rate = (ship_available / total_items * 100) if total_items > 0 else 0
+    avg_ship_hours = df[df['ship_hours'].notna()]['ship_hours'].mean() if ship_available > 0 else 0
+    fast_shipping_count = len(df[df['ship_hours'] <= 24]) if 'ship_hours' in df.columns else 0
+    fast_shipping_rate = (fast_shipping_count / total_items * 100) if total_items > 0 else 0
     prime_count = len(df[df.get('is_prime', False)]) if 'is_prime' in df.columns else 0
-    amazon_seller_count = len(df[df.get('seller_type', '') == 'amazon']) if 'seller_type' in df.columns else 0
-    official_seller_count = len(df[df.get('seller_type', '') == 'official_manufacturer']) if 'seller_type' in df.columns else 0
-    third_party_count = len(df[df.get('seller_type', '') == 'third_party']) if 'seller_type' in df.columns else 0
-    
-    # Shopee適性スコア統計
-    if 'shopee_suitability_score' in df.columns:
-        valid_scores = df[df['shopee_suitability_score'] > 0]['shopee_suitability_score']
-        avg_shopee_score = valid_scores.mean() if len(valid_scores) > 0 else 0
-        high_score_count = len(valid_scores[valid_scores >= 80])
-    else:
-        avg_shopee_score = 0
-        high_score_count = 0
-    
     return {
-        # 基本統計
         'total': total_items,
         'processed': processed_count,
         'success': success_count,
         'failed': failed_count,
         'success_rate': success_rate,
-        
-        # 3グループ統計
-        'group_a': stats_data['group_a'],
-        'group_b': stats_data['group_b'],
-        'group_c': stats_data['group_c'],
-        'valid_candidates': total_items,  # 3グループ版では全て有効候補
-        
-        # Prime・出品者統計
+        'group_a': group_a,
+        'group_b': group_b,
+        'valid_candidates': total_items,
+        'ship_available': ship_available,
+        'ship_rate': ship_rate,
+        'avg_ship_hours': avg_ship_hours,
+        'fast_shipping_count': fast_shipping_count,
+        'fast_shipping_rate': fast_shipping_rate,
         'prime_count': prime_count,
-        'amazon_seller_count': amazon_seller_count,
-        'official_seller_count': official_seller_count,
-        'third_party_count': third_party_count,
         'prime_rate': (prime_count / total_items * 100) if total_items > 0 else 0,
-        
-        # Shopee適性統計
-        'avg_shopee_score': avg_shopee_score,
-        'high_score_count': high_score_count,
-        'high_score_rate': (high_score_count / total_items * 100) if total_items > 0 else 0,
-        
-        # 進捗
         'progress': (processed_count / total_items * 100) if total_items > 0 else 0
     }
 
+def create_empty_status_2groups():
+    """2グループ版空ステータス作成"""
+    return {
+        'total': 0, 'processed': 0, 'success': 0, 'failed': 0, 'success_rate': 0,
+        'group_a': 0, 'group_b': 0, 'valid_candidates': 0,
+        'ship_available': 0, 'ship_rate': 0, 'avg_ship_hours': 0,
+        'fast_shipping_count': 0, 'fast_shipping_rate': 0,
+        'prime_count': 0, 'prime_rate': 0, 'progress': 0
+    }
+
+# ======================== ShippingTime v8 高度分析機能 ========================
+
+def analyze_category_shipping_patterns(df):
+    """
+    カテゴリ別ShippingTime取得パターン分析
+    「美容は欠損30%、家電は5%」などの傾向把握
+    """
+    print("🔍 カテゴリ別ShippingTime取得パターン分析開始...")
+    
+    category_analysis = {}
+    
+    # カテゴリカラムの特定
+    category_columns = ['main_category', 'amazon_brand', 'seller_type', 'brand']
+    available_category = None
+    
+    for col in category_columns:
+        if col in df.columns and df[col].notna().sum() > 0:
+            available_category = col
+            break
+    
+    if not available_category:
+        print("⚠️ カテゴリ情報が見つかりません")
+        return {}
+    
+    print(f"📊 {available_category}別分析実行中...")
+    
+    # カテゴリごとの取得率分析
+    for category, subset in df.groupby(available_category):
+        if pd.notna(category) and len(subset) >= 3:  # 最低3件以上のカテゴリのみ
+            analysis = monitor_shipping_time_rate_v8(subset, bucket=str(category))
+            category_analysis[str(category)] = analysis
+    
+    # 取得率ランキング
+    if category_analysis:
+        sorted_categories = sorted(
+            category_analysis.items(), 
+            key=lambda x: x[1]['success_rate'], 
+            reverse=True
+        )
+        
+        print(f"\n🏆 {available_category}別取得率ランキング:")
+        for i, (cat, data) in enumerate(sorted_categories[:10]):
+            print(f"   {i+1}. {cat}: {data['success_rate']:.1f}% ({data['with_shipping']}/{data['total']})")
+        
+        # 要注意カテゴリ（取得率70%未満）
+        low_rate_categories = [(cat, data) for cat, data in category_analysis.items() 
+                              if data['success_rate'] < 70 and data['total'] >= 5]
+        
+        if low_rate_categories:
+            print(f"\n⚠️ 要注意カテゴリ（取得率<70%）:")
+            for cat, data in low_rate_categories:
+                print(f"   🔴 {cat}: {data['success_rate']:.1f}% - 改善要検討")
+    
+    return category_analysis
+
+def monitor_shipping_time_rate_v8(df, bucket="overall"):
+    """
+    ShippingTime取得率監視 v8 - カテゴリ別ヒートマップ対応
+    """
+    total = len(df)
+    if total == 0:
+        print(f"📊 {bucket}: データなし")
+        return {}
+    
+    with_ship = df['ship_hours'].notna().sum() if 'ship_hours' in df.columns else 0
+    miss_rate = 100 * (total - with_ship) / total
+    success_rate = 100 - miss_rate
+    
+    # 基本統計
+    print(f"📊 {bucket} ShippingTime取得率: {success_rate:.1f}% ({with_ship}/{total})")
+    print(f"📊 {bucket} ShippingTime欠損率: {miss_rate:.1f}% ({total - with_ship}/{total})")
+    
+    # 詳細分析
+    analysis = {
+        "bucket": bucket,
+        "total": total,
+        "with_shipping": with_ship,
+        "success_rate": success_rate,
+        "miss_rate": miss_rate
+    }
+    
+    # フォールバック効果分析
+    if 'classification_reason' in df.columns:
+        fallback_analysis = df['classification_reason'].value_counts()
+        analysis["fallback_effectiveness"] = fallback_analysis.to_dict()
+        
+        # 主要フォールバック率
+        amazon_fallback = fallback_analysis.get("Amazon本体フォールバック", 0)
+        fba_fallback = fallback_analysis.get("FBAフォールバック", 0)
+        
+        print(f"   🏆 Amazon本体フォールバック: {amazon_fallback}件 ({amazon_fallback/total*100:.1f}%)")
+        print(f"   📦 FBAフォールバック: {fba_fallback}件 ({fba_fallback/total*100:.1f}%)")
+    
+    # 発送時間分布（取得できた商品のみ）
+    if 'ship_hours' in df.columns and with_ship > 0:
+        valid_hours = df[df['ship_hours'].notna()]['ship_hours']
+        fast_shipping = len(valid_hours[valid_hours <= 24])
+        medium_shipping = len(valid_hours[(valid_hours > 24) & (valid_hours <= 48)])
+        slow_shipping = len(valid_hours[valid_hours > 48])
+        
+        print(f"   ⚡ 24時間以内: {fast_shipping}件 ({fast_shipping/with_ship*100:.1f}%)")
+        print(f"   🟡 25-48時間: {medium_shipping}件 ({medium_shipping/with_ship*100:.1f}%)")
+        print(f"   🔴 48時間超: {slow_shipping}件 ({slow_shipping/with_ship*100:.1f}%)")
+        
+        analysis["shipping_distribution"] = {
+            "fast_24h": fast_shipping,
+            "medium_48h": medium_shipping,
+            "slow_48h_plus": slow_shipping,
+            "avg_hours": valid_hours.mean(),
+            "median_hours": valid_hours.median()
+        }
+    
+    return analysis
+
+def track_missing_asins(df):
+    """
+    欠損ASIN追跡フラグ機能
+    「なぜ欠損したか」を後で分析用
+    """
+    print("🔍 ShippingTime欠損ASIN追跡分析開始...")
+    
+    if 'ship_hours' not in df.columns:
+        print("⚠️ ship_hoursカラムが見つかりません")
+        return df
+    
+    # 欠損フラグ追加
+    df['shipping_missing'] = df['ship_hours'].isna()
+    missing_count = df['shipping_missing'].sum()
+    total_count = len(df)
+    
+    print(f"📊 ShippingTime欠損: {missing_count}/{total_count}件 ({missing_count/total_count*100:.1f}%)")
+    
+    # 欠損理由の分類
+    missing_reasons = []
+    
+    for idx, row in df[df['shipping_missing']].iterrows():
+        if row.get('api_source') == 'fallback':
+            reason = "API呼び出し失敗"
+        elif row.get('seller_type') == 'third_party':
+            reason = "サードパーティ出品者"
+        elif not row.get('is_prime', False):
+            reason = "非Prime商品"
+        elif row.get('classification_reason', '').startswith('最終'):
+            reason = "全フォールバック失敗"
+        else:
+            reason = "不明"
+        
+        missing_reasons.append(reason)
+    
+    # 欠損理由統計
+    if missing_reasons:
+        from collections import Counter
+        reason_counts = Counter(missing_reasons)
+        
+        print(f"📋 欠損理由別統計:")
+        for reason, count in reason_counts.most_common():
+            print(f"   📌 {reason}: {count}件 ({count/missing_count*100:.1f}%)")
+        
+        # 欠損理由をデータフレームに追加
+        df.loc[df['shipping_missing'], 'missing_reason'] = missing_reasons
+    
+    return df
+
+def generate_improvement_roadmap(analysis_results):
+    """
+    段階的精度向上ロードマップ生成
+    Phase1〜4の改善提案
+    """
+    print("🗺️ ShippingTime改善ロードマップ生成中...")
+    
+    overall_rate = analysis_results.get('success_rate', 0)
+    
+    roadmap = {
+        "current_status": f"ShippingTime取得率: {overall_rate:.1f}%",
+        "phases": []
+    }
+    
+    # Phase 1: 基盤完成（現在）
+    phase1 = {
+        "phase": "Phase 1 - 基盤完成",
+        "status": "✅ 完了" if overall_rate >= 60 else "🔄 進行中",
+        "targets": [
+            "ShippingTime + Prime fallback",
+            "バッチAPI活用",
+            "Amazon本体/FBA優先判定"
+        ],
+        "expected_rate": "60-70%"
+    }
+    roadmap["phases"].append(phase1)
+    
+    # Phase 2: カテゴリ別最適化
+    phase2 = {
+        "phase": "Phase 2 - カテゴリ別最適化",
+        "status": "📋 計画中",
+        "targets": [
+            "カテゴリ別しきい値調整",
+            "ヘルスケア: 36h許容",
+            "家電: 24h厳格",
+            "低取得率カテゴリ重点改善"
+        ],
+        "expected_rate": "70-80%",
+        "implementation": [
+            "カテゴリ別監視強化",
+            "しきい値動的調整",
+            "カテゴリ別フォールバック戦略"
+        ]
+    }
+    roadmap["phases"].append(phase2)
+    
+    # Phase 3: ML予測導入
+    phase3 = {
+        "phase": "Phase 3 - ML予測導入", 
+        "status": "🔬 研究段階",
+        "targets": [
+            "LightGBM/XGBoostによる欠損予測",
+            "ブランド・価格・レビュー数から発送時間推定",
+            "予測精度80%以上"
+        ],
+        "expected_rate": "80-90%",
+        "features": [
+            "商品価格", "レビュー数", "ブランド", 
+            "出品者履歴", "カテゴリ", "季節性"
+        ]
+    }
+    roadmap["phases"].append(phase3)
+    
+    # Phase 4: 利益最大化最適化
+    phase4 = {
+        "phase": "Phase 4 - 利益最大化最適化",
+        "status": "🚀 将来計画",
+        "targets": [
+            "需要予測 × 発送リスク最適化",
+            "利益最大化を目的関数とした選択",
+            "リアルタイム動的調整"
+        ],
+        "expected_rate": "90%+",
+        "optimization": [
+            "売上寄与度重み付け",
+            "在庫回転率考慮",
+            "競合分析統合"
+        ]
+    }
+    roadmap["phases"].append(phase4)
+    
+    # 現在推奨するアクション
+    if overall_rate < 70:
+        roadmap["immediate_actions"] = [
+            "🔧 バッチAPI利用率向上",
+            "⚠️ リトライ間隔最適化",
+            "📊 カテゴリ別分析実施"
+        ]
+    elif overall_rate < 80:
+        roadmap["immediate_actions"] = [
+            "✅ Phase2着手: カテゴリ別しきい値",
+            "📈 低取得率カテゴリ重点改善",
+            "🎯 ML予測準備"
+        ]
+    else:
+        roadmap["immediate_actions"] = [
+            "🎉 高取得率達成",
+            "🔬 ML予測研究開始",
+            "📊 利益最大化分析準備"
+        ]
+    
+    # ロードマップ表示
+    print(f"\n📊 現在ステータス: {roadmap['current_status']}")
+    for phase in roadmap["phases"]:
+        print(f"\n{phase['status']} {phase['phase']}")
+        print(f"   目標取得率: {phase['expected_rate']}")
+        for target in phase['targets']:
+            print(f"   • {target}")
+    
+    print(f"\n🎯 即座実行推奨:")
+    for action in roadmap["immediate_actions"]:
+        print(f"   {action}")
+    
+    return roadmap
+
+# 既存のmonitor_shipping_time_rate関数をv8版で置き換え
+monitor_shipping_time_rate = monitor_shipping_time_rate_v8
+
 def export_shopee_optimized_excel(df):
     """
-    Shopee出品最適化Excel出力（3グループ版）
+    Shopee出品最適化Excel出力（2グループ版）
+    グループA: 即座出品可能
+    グループB: 在庫管理制御
     """
     import io
     
     excel_buffer = io.BytesIO()
     
-    # 3グループ別に分類
+    # 2グループ別に分類
     groups = {
-        'A': df[df['shopee_group'] == 'A'],
-        'B': df[df['shopee_group'] == 'B'], 
-        'C': df[df['shopee_group'] == 'C']
+        'A': df[df['shopee_group'] == 'A'] if 'shopee_group' in df.columns else pd.DataFrame(),
+        'B': df[df['shopee_group'] == 'B'] if 'shopee_group' in df.columns else pd.DataFrame()
     }
+    
+    # 分類カラムがない場合の緊急フォールバック
+    if 'shopee_group' not in df.columns:
+        print("⚠️ shopee_groupカラムなし - 全商品をグループBに設定")
+        groups['A'] = pd.DataFrame()
+        groups['B'] = df.copy()
     
     with pd.ExcelWriter(excel_buffer, engine='xlsxwriter') as writer:
         # サマリーシート
-        create_shopee_summary_sheet_3groups(writer, df, groups)
+        create_shopee_summary_sheet_2groups(writer, df, groups)
         
-        # 3グループ別シート
+        # 2グループ別シート
         sheet_configs = [
-            ('A', '🏆_即座出品可能_Prime+公式', '最優先で出品すべき商品'),
-            ('B', '🟡_確認後出品_Prime+他社', '確認後に出品推奨する商品'),
-            ('C', '🔵_検討対象_非Prime', '慎重に検討すべき商品')
+            ('A', '🏆_即座出品_24h以内', '24時間以内発送 - DTS規約クリア確実'),
+            ('B', '📦_在庫管理制御_それ以外', 'Aの条件外は全部ここ（在庫管理で制御）')
         ]
         
         for group_key, sheet_name, description in sheet_configs:
             group_df = groups[group_key]
             if len(group_df) > 0:
-                create_shopee_group_sheet(writer, group_df, sheet_name, description)
+                create_shopee_group_sheet_v2(writer, group_df, sheet_name, description)
         
         # 統計シート
-        create_shopee_stats_sheet_3groups(writer, df)
+        create_shopee_stats_sheet_2groups(writer, df)
     
     excel_buffer.seek(0)
     return excel_buffer
 
-def create_shopee_summary_sheet_3groups(writer, df, groups):
-    """3グループ版サマリーシート作成"""
+def create_shopee_summary_sheet_2groups(writer, df, groups):
+    """2グループ版サマリーシート作成"""
     summary_data = []
     
-    for group_key in ['A', 'B', 'C']:
+    for group_key in ['A', 'B']:
         group_df = groups[group_key]
         count = len(group_df)
         
@@ -547,13 +767,21 @@ def create_shopee_summary_sheet_3groups(writer, df, groups):
             avg_shopee_score = group_df.get('shopee_suitability_score', pd.Series([0])).mean()
             avg_relevance = group_df.get('relevance_score', pd.Series([0])).mean()
             prime_rate = (len(group_df[group_df.get('is_prime', False)]) / count * 100) if count > 0 else 0
+            
+            # ShippingTime統計
+            if 'ship_hours' in group_df.columns:
+                ship_available = len(group_df[group_df['ship_hours'].notna()])
+                avg_ship_hours = group_df[group_df['ship_hours'].notna()]['ship_hours'].mean() if ship_available > 0 else 0
+            else:
+                ship_available = 0
+                avg_ship_hours = 0
         else:
-            avg_shopee_score = avg_relevance = prime_rate = 0
+            avg_shopee_score = avg_relevance = prime_rate = avg_ship_hours = 0
+            ship_available = 0
         
         group_names = {
-            'A': '🏆 即座出品可能（Prime+公式）',
-            'B': '🟡 確認後出品（Prime+他社）', 
-            'C': '🔵 検討対象（非Prime）'
+            'A': '🏆 即座出品可能（24時間以内発送）',
+            'B': '📦 在庫管理制御（それ以外）'
         }
         
         summary_data.append({
@@ -562,18 +790,21 @@ def create_shopee_summary_sheet_3groups(writer, df, groups):
             '割合': f"{count/len(df)*100:.1f}%" if len(df) > 0 else "0%",
             'Shopee適性': f"{avg_shopee_score:.1f}点",
             '一致度': f"{avg_relevance:.1f}%",
-            'Prime率': f"{prime_rate:.1f}%"
+            'Prime率': f"{prime_rate:.1f}%",
+            'ShippingTime取得': f"{ship_available}件",
+            '平均発送時間': f"{avg_ship_hours:.1f}h" if avg_ship_hours > 0 else "N/A"
         })
     
     summary_df = pd.DataFrame(summary_data)
-    summary_df.to_excel(writer, sheet_name='📊_Shopee出品サマリー', index=False)
+    summary_df.to_excel(writer, sheet_name='📊_Shopee出品サマリー_v8', index=False)
 
-def create_shopee_group_sheet(writer, group_df, sheet_name, description):
-    """Shopeeグループ別シート作成"""
+def create_shopee_group_sheet_v2(writer, group_df, sheet_name, description):
+    """Shopeeグループ別シート作成 v2（2グループ対応）"""
     # 必要カラムのみ抽出・整理
     output_columns = [
         'asin', 'amazon_asin', 'amazon_title', 'japanese_name', 
         'shopee_suitability_score', 'relevance_score',
+        'ship_hours', 'ship_bucket',  # ShippingTime情報追加
         'is_prime', 'seller_name', 'seller_type',
         'amazon_brand', 'llm_source'
     ]
@@ -583,10 +814,17 @@ def create_shopee_group_sheet(writer, group_df, sheet_name, description):
     
     if available_columns:
         output_df = group_df[available_columns].copy()
-        output_df.to_excel(writer, sheet_name=sheet_name, index=False)
+        
+        # 説明行を追加
+        description_row = pd.DataFrame([[ '=' * 50, description, '=' * 50 ] + [''] * (len(available_columns) - 3)], 
+                                      columns=available_columns)
+        
+        # 説明＋データを結合
+        final_df = pd.concat([description_row, output_df], ignore_index=True)
+        final_df.to_excel(writer, sheet_name=sheet_name, index=False)
 
-def create_shopee_stats_sheet_3groups(writer, df):
-    """3グループ版統計シート作成"""
+def create_shopee_stats_sheet_2groups(writer, df):
+    """2グループ版統計シート作成"""
     stats_data = []
     
     # 基本統計
@@ -594,6 +832,7 @@ def create_shopee_stats_sheet_3groups(writer, df):
     success = len(df[df.get('search_status') == 'success']) if 'search_status' in df.columns else len(df[df.get('asin', '') != ''])
     
     stats_data.extend([
+        ['=== ShippingTime最優先システム v8 統計 ===', ''],
         ['基本統計', ''],
         ['総商品数', total],
         ['ASIN取得成功', success],
@@ -601,14 +840,29 @@ def create_shopee_stats_sheet_3groups(writer, df):
         ['', ''],
     ])
     
-    # 3グループ統計
+    # 2グループ統計
     if 'shopee_group' in df.columns:
         group_counts = df['shopee_group'].value_counts()
         stats_data.extend([
-            ['グループ統計', ''],
+            ['グループ統計（2グループ版）', ''],
             ['グループA（即座出品）', group_counts.get('A', 0)],
-            ['グループB（確認後出品）', group_counts.get('B', 0)],
-            ['グループC（慎重検討）', group_counts.get('C', 0)],
+            ['グループB（在庫管理制御）', group_counts.get('B', 0)],
+            ['', '']
+        ])
+    
+    # ShippingTime統計
+    if 'ship_hours' in df.columns:
+        ship_available = len(df[df['ship_hours'].notna()])
+        ship_rate = (ship_available / total * 100) if total > 0 else 0
+        avg_ship_hours = df[df['ship_hours'].notna()]['ship_hours'].mean() if ship_available > 0 else 0
+        fast_shipping = len(df[df['ship_hours'] <= 24]) if ship_available > 0 else 0
+        
+        stats_data.extend([
+            ['ShippingTime統計', ''],
+            ['ShippingTime取得数', ship_available],
+            ['取得率', f"{ship_rate:.1f}%"],
+            ['平均発送時間', f"{avg_ship_hours:.1f}時間"],
+            ['24時間以内発送', f"{fast_shipping}件"],
             ['', '']
         ])
     
@@ -630,437 +884,16 @@ def create_shopee_stats_sheet_3groups(writer, df):
             ['Amazon出品', seller_counts.get('amazon', 0)],
             ['公式メーカー', seller_counts.get('official_manufacturer', 0)],
             ['サードパーティ', seller_counts.get('third_party', 0)],
-            ['', '']
         ])
     
     stats_df = pd.DataFrame(stats_data, columns=['項目', '値'])
-    stats_df.to_excel(writer, sheet_name='📈_詳細統計', index=False)
+    stats_df.to_excel(writer, sheet_name='📈_詳細統計_v8', index=False)
 
-def create_empty_status_3groups():
-    """3グループ版空ステータス作成"""
-    return {
-        'total': 0, 'processed': 0, 'success': 0, 'failed': 0, 'success_rate': 0,
-        'group_a': 0, 'group_b': 0, 'group_c': 0, 'valid_candidates': 0,
-        'prime_count': 0, 'amazon_seller_count': 0, 'official_seller_count': 0, 'third_party_count': 0, 'prime_rate': 0,
-        'avg_shopee_score': 0, 'high_score_count': 0, 'high_score_rate': 0, 'progress': 0
-    }
-
-def update_approval_status(df, item_id, status):
-    """
-    承認状態を更新（3グループ版）
-    
-    Args:
-        df: データフレーム
-        item_id: アイテムID（インデックス）
-        status: 新しい状態（'approved', 'rejected', 'pending'）
-    
-    Returns:
-        更新されたデータフレーム
-    """
-    if item_id in df.index:
-        df.at[item_id, 'approval_status'] = status
-        
-        # 承認時は自動的にグループAに昇格
-        if status == 'approved':
-            if 'shopee_group' in df.columns:
-                df.at[item_id, 'shopee_group'] = 'A'
-            else:
-                df.at[item_id, 'confidence_group'] = 'A'
-        # 却下時はグループCに降格（3グループ版）
-        elif status == 'rejected':
-            if 'shopee_group' in df.columns:
-                df.at[item_id, 'shopee_group'] = 'C'
-            else:
-                df.at[item_id, 'confidence_group'] = 'C'
-    
-    return df
-
-def promote_to_group_a(df, item_ids):
-    """
-    指定されたアイテムをグループAに昇格
-    
-    Args:
-        df: データフレーム
-        item_ids: 昇格させるアイテムのIDリスト
-    
-    Returns:
-        更新されたデータフレーム
-    """
-    for item_id in item_ids:
-        if item_id in df.index:
-            if 'shopee_group' in df.columns:
-                df.at[item_id, 'shopee_group'] = 'A'
-            else:
-                df.at[item_id, 'confidence_group'] = 'A'
-            df.at[item_id, 'approval_status'] = 'approved'
-    
-    return df
-
-def get_asin_column(df):
-    """ASINカラムを取得"""
-    for col in ['asin', 'amazon_asin', 'ASIN']:
-        if col in df.columns:
-            return col
-    return None
-
-# ======================== 既存機能（後方互換性維持） ========================
-
-def classify_confidence_groups(df, high_threshold=70, medium_threshold=40):
-    """
-    既存システム互換性のための分類関数
-    
-    ⚠️ 推奨: 新システムでは classify_for_shopee_listing を使用してください
-    Prime+出品者情報が利用可能な場合は自動的にShopee特化分類を実行
-    """
-    print("⚠️ 既存システム互換モード: classify_confidence_groups")
-    
-    # Prime+出品者情報が利用可能かチェック
-    has_prime_info = 'is_prime' in df.columns
-    has_seller_info = 'seller_type' in df.columns
-    has_shopee_score = 'shopee_suitability_score' in df.columns
-    
-    if has_prime_info and has_seller_info:
-        print("   🚀 Prime+出品者情報検出 → Shopee特化分類（3グループ版）を実行")
-        shopee_classified = classify_for_shopee_listing(df)
-        
-        # 従来の confidence_group カラムを追加（互換性のため）
-        def shopee_to_confidence(shopee_group):
-            mapping = {'A': 'A', 'B': 'B', 'C': 'C'}
-            return mapping.get(shopee_group, 'C')
-        
-        shopee_classified['confidence_group'] = shopee_classified['shopee_group'].apply(shopee_to_confidence)
-        
-        return shopee_classified
-    
-    else:
-        print("   📊 従来システムで分類実行")
-        return classify_legacy_confidence_groups(df, high_threshold, medium_threshold)
-
-def classify_legacy_confidence_groups(df, high_threshold=70, medium_threshold=40):
-    """
-    従来の分類ロジック（Prime情報なしの場合）
-    """
-    df = df.copy()
-    
-    # 必要なカラムが存在しない場合は追加
-    if 'is_prime' not in df.columns:
-        df['is_prime'] = False
-    
-    if 'relevance_score' not in df.columns:
-        df['relevance_score'] = 0
-    
-    # ASIN関連カラムの統一
-    asin_column = get_asin_column(df)
-    if asin_column is None:
-        df['asin'] = ''
-        asin_column = 'asin'
-    
-    # グループ分類（一致度中心）
-    conditions = [
-        df['relevance_score'] >= high_threshold,
-        df['relevance_score'] >= medium_threshold,
-        df['relevance_score'] < medium_threshold
-    ]
-    choices = ['A', 'B', 'C']
-    df['confidence_group'] = np.select(conditions, choices, default='C')
-    
-    # Amazon商品ページリンク生成
-    df['amazon_link'] = df[asin_column].apply(
-        lambda asin: f"https://www.amazon.co.jp/dp/{asin}" if asin and pd.notna(asin) else ""
-    )
-    
-    # 初期承認ステータス
-    if 'approval_status' not in df.columns:
-        df['approval_status'] = 'pending'
-        
-    # グループごとにソート
-    df = df.sort_values(by=['confidence_group', 'relevance_score'], 
-                        ascending=[True, False])
-    
-    # 統計出力
-    group_counts = df['confidence_group'].value_counts().sort_index()
-    print(f"📊 従来型分類結果:")
-    print(f"   グループA（高一致度）: {group_counts.get('A', 0)}件")
-    print(f"   グループB（中一致度）: {group_counts.get('B', 0)}件")
-    print(f"   グループC（低一致度）: {group_counts.get('C', 0)}件")
-    
-    return df
-
-def calculate_batch_status(df):
-    """
-    バッチ処理ステータスの計算（互換性維持）
-    
-    Shopee特化データがある場合は自動的にShopee統計を使用
-    """
-    # Shopee特化データがあるかチェック
-    has_shopee_data = 'shopee_group' in df.columns
-    
-    if has_shopee_data:
-        print("   📊 Shopee特化統計（3グループ版）を使用")
-        return calculate_batch_status_shopee(df)
-    else:
-        print("   📊 従来統計を使用")
-        return calculate_legacy_batch_status(df)
-
-def calculate_legacy_batch_status(df):
-    """
-    従来のバッチ処理ステータス計算
-    """
-    total_items = len(df)
-    if total_items == 0:
-        return create_empty_status_3groups()
-    
-    # ASIN関連カラムの統一
-    asin_column = get_asin_column(df)
-    
-    # 処理済みカウント（search_statusがある場合）
-    if 'search_status' in df.columns:
-        processed_count = len(df[df['search_status'].notna()])
-        success_count = len(df[df['search_status'] == 'success'])
-        failed_count = processed_count - success_count
-    elif asin_column:
-        # search_statusがない場合はASINの有無で判定
-        success_count = len(df[df[asin_column].notna() & (df[asin_column] != '') & (df[asin_column] != 'N/A')])
-        processed_count = total_items  # 全件処理済みと仮定
-        failed_count = total_items - success_count
-    else:
-        processed_count = total_items
-        success_count = 0
-        failed_count = 0
-    
-    # 成功率計算
-    success_rate = (success_count / total_items * 100) if total_items > 0 else 0
-    
-    # グループごとの件数（confidence_groupがある場合）
-    if 'confidence_group' in df.columns:
-        group_a_count = len(df[df['confidence_group'] == 'A'])
-        group_b_count = len(df[df['confidence_group'] == 'B'])
-        group_c_count = len(df[df['confidence_group'] == 'C'])
-    else:
-        group_a_count = 0
-        group_b_count = 0
-        group_c_count = 0
-    
-    # 承認ステータスごとの件数
-    if 'approval_status' in df.columns:
-        approved_count = len(df[df['approval_status'] == 'approved'])
-        rejected_count = len(df[df['approval_status'] == 'rejected'])
-        pending_count = len(df[df['approval_status'] == 'pending'])
-    else:
-        approved_count = group_a_count
-        rejected_count = 0
-        pending_count = group_b_count
-    
-    # 進捗率計算
-    progress_percentage = (processed_count / total_items * 100) if total_items > 0 else 0
-    
-    return {
-        'total': total_items,
-        'processed': processed_count,      
-        'success': success_count,          
-        'failed': failed_count,            
-        'success_rate': success_rate,      
-        'group_a': group_a_count,
-        'group_b': group_b_count,
-        'group_c': group_c_count,
-        'valid_candidates': group_a_count + group_b_count + group_c_count,
-        'approved': approved_count,
-        'rejected': rejected_count,
-        'pending': pending_count,
-        'progress': progress_percentage,
-        
-        # Shopee統計（互換性のため0で初期化）
-        'prime_count': 0,
-        'amazon_seller_count': 0,
-        'official_seller_count': 0,
-        'third_party_count': 0,
-        'prime_rate': 0,
-        'avg_shopee_score': 0,
-        'high_score_count': 0,
-        'high_score_rate': 0
-    }
-
-def export_to_excel_with_sheets(df, groups=None):
-    """
-    既存のExcel出力機能（互換性維持）
-    
-    Shopee特化データがある場合は自動的にShopee最適化出力を使用
-    """
-    has_shopee_data = 'shopee_group' in df.columns
-    
-    if has_shopee_data:
-        print("   📊 Shopee最適化Excel出力（3グループ版）を使用")
-        return export_shopee_optimized_excel(df)
-    else:
-        print("   📊 従来Excel出力を使用")
-        return export_legacy_excel_with_sheets(df, groups)
-
-def export_legacy_excel_with_sheets(df, groups=None):
-    """
-    従来のExcel出力機能
-    """
-    import io
-    from openpyxl import Workbook
-    from openpyxl.styles import PatternFill, Font
-    
-    # バッファを作成
-    excel_buffer = io.BytesIO()
-    
-    # グループが指定されていない場合は自動分類
-    if groups is None:
-        df_classified = classify_legacy_confidence_groups(df)
-        groups = {
-            'group_a': df_classified[df_classified['confidence_group'] == 'A'],
-            'group_b': df_classified[df_classified['confidence_group'] == 'B'],
-            'group_c': df_classified[df_classified['confidence_group'] == 'C']
-        }
-    # Excelファイル作成
-    with pd.ExcelWriter(excel_buffer, engine='xlsxwriter') as writer:
-        # サマリーシート
-        summary_data = pd.DataFrame({
-            'グループ': ['高一致度', '中一致度', '低一致度', '合計'],
-            '件数': [
-                len(groups['group_a']), 
-                len(groups['group_b']), 
-                len(groups['group_c']), 
-                len(df)
-            ],
-            '割合': [
-                f"{len(groups['group_a'])/len(df)*100:.1f}%" if len(df) > 0 else "0%", 
-                f"{len(groups['group_b'])/len(df)*100:.1f}%" if len(df) > 0 else "0%", 
-                f"{len(groups['group_c'])/len(df)*100:.1f}%" if len(df) > 0 else "0%",
-                "100%"
-            ]
-        })
-        summary_data.to_excel(writer, sheet_name='サマリー', index=False)
-        
-        # 各グループのシート
-        groups['group_a'].to_excel(writer, sheet_name='A_高一致度', index=False)
-        groups['group_b'].to_excel(writer, sheet_name='B_中一致度', index=False)
-        groups['group_c'].to_excel(writer, sheet_name='C_低一致度', index=False)
-        
-        # 全データシート
-        df.to_excel(writer, sheet_name='全データ', index=False)
-        
-        # ワークブック取得
-        workbook = writer.book
-        
-        # シート書式設定
-        for sheet_name in ['A_高一致度', 'B_中一致度', 'C_低一致度', '全データ']:
-            if sheet_name in writer.sheets:
-                worksheet = writer.sheets[sheet_name]
-                worksheet.set_column('A:A', 15)  # ASIN列
-                worksheet.set_column('B:C', 40)  # 商品名列
-                worksheet.set_column('D:Z', 15)  # その他の列
-                
-                # ヘッダー行書式設定
-                header_format = workbook.add_format({
-                    'bold': True,
-                    'text_wrap': True,
-                    'valign': 'top',
-                    'bg_color': '#D9D9D9',
-                    'border': 1
-                })
-                
-                # ヘッダー行に書式適用
-                for col_num in range(len(df.columns)):
-                    worksheet.write(0, col_num, df.columns[col_num], header_format)
-    
-    excel_buffer.seek(0)
-    return excel_buffer
-
-def generate_demo_data(n_rows=16):
-    """
-    3グループ対応デモ用のサンプルデータを生成
-    """
-    np.random.seed(42)  # 再現性のため
-    
-    # 3グループ対応サンプル商品データ
-    products = [
-        # グループA: Prime + Amazon/公式メーカー (6件)
-        ('FANCL mild cleansing oil 120ml', 'ファンケル マイルド クレンジング オイル 120ml', 85, True, 'official_manufacturer'),
-        ('MILBON elujuda hair treatment', 'ミルボン エルジューダ ヘアトリートメント', 78, True, 'amazon'),
-        ('Biore aqua rich watery essence', 'ビオレ アクア リッチ ウォータリー エッセンス', 82, True, 'amazon'),
-        ('DHC deep cleansing oil', 'DHC ディープ クレンジング オイル', 80, True, 'official_manufacturer'),
-        ('Shiseido senka perfect whip', '資生堂 専科 パーフェクト ホイップ', 83, True, 'amazon'),
-        ('KOSE softymo deep cleansing oil', 'コーセー ソフティモ ディープ クレンジング オイル', 77, True, 'official_manufacturer'),
-        
-        # グループB: Prime + サードパーティ (6件)
-        ('TSUBAKI premium repair mask', 'ツバキ プレミアム リペア マスク', 65, True, 'third_party'),
-        ('ROHTO hadalabo gokujyun lotion', 'ロート 肌ラボ 極潤 化粧水', 68, True, 'third_party'),
-        ('KANEBO suisai beauty clear powder', 'カネボウ スイサイ ビューティクリア パウダー', 62, True, 'third_party'),
-        ('LANEIGE water sleeping mask', 'ラネージュ ウォーター スリーピング マスク', 70, True, 'third_party'),
-        ('KIEHL\'S ultra facial cream', 'キールズ ウルトラ フェイシャル クリーム', 72, True, 'third_party'),
-        ('INNISFREE green tea seed serum', 'イニスフリー グリーンティー シード セラム', 67, True, 'third_party'),
-        
-        # グループC: 非Prime (4件)
-        ('Generic vitamin C serum', 'ビタミンC 美容液', 45, False, 'third_party'),
-        ('Unknown brand face mask', '無名ブランド フェイスマスク', 38, False, 'third_party'),
-        ('Basic moisturizer cream', 'ベーシック モイスチャライザー', 42, False, 'third_party'),
-        ('Simple cleansing foam', 'シンプル クレンジング フォーム', 40, False, 'third_party'),
-    ]
-    
-    # 必要に応じて行数調整
-    if n_rows > len(products):
-        products = products * (n_rows // len(products) + 1)
-    products = products[:n_rows]
-    
-    # データフレーム生成
-    data_rows = []
-    for i, (eng_name, jp_name, relevance, is_prime, seller_type) in enumerate(products):
-        # Prime+出品者情報に基づくShopee適性スコア計算
-        shopee_score = 0
-        if is_prime:
-            shopee_score += 50
-        
-        if seller_type == 'amazon':
-            shopee_score += 30
-        elif seller_type == 'official_manufacturer':
-            shopee_score += 25
-        elif seller_type == 'third_party':
-            shopee_score += 10
-        
-        shopee_score += min(relevance * 0.2, 20)
-        
-        data_rows.append({
-            'clean_title': eng_name,
-            'japanese_name': jp_name,
-            'llm_source': 'GPT-4o' if np.random.random() > 0.2 else 'Gemini',
-            'amazon_asin': f"B{i+1:09d}X{np.random.randint(10, 99)}",
-            'asin': f"B{i+1:09d}X{np.random.randint(10, 99)}",
-            'amazon_title': jp_name,
-            'amazon_brand': jp_name.split()[0] if ' ' in jp_name else 'Unknown',
-            'brand': jp_name.split()[0] if ' ' in jp_name else 'Unknown',
-            'relevance_score': relevance + np.random.randint(-3, 4),
-            'match_percentage': relevance + np.random.randint(-5, 6),
-            'is_prime': is_prime,
-            'seller_type': seller_type,
-            'seller_name': {
-                'amazon': 'Amazon.co.jp',
-                'official_manufacturer': jp_name.split()[0] + '株式会社',
-                'third_party': f"サードパーティ出品者{i+1}"
-            }.get(seller_type, 'Unknown'),
-            'search_status': 'success',
-            'price': f"¥{np.random.randint(800, 8000)}",
-            'extracted_brand': jp_name.split()[0] if ' ' in jp_name else '',
-            'extracted_quantity': f"{np.random.choice(['120ml', '200ml', '500ml', '1000ml'])}" if np.random.random() > 0.3 else '',
-            'relevance_details': f"ブランド一致: +25点, 重要語一致: +{np.random.randint(10,20)}点",
-            'shopee_suitability_score': int(shopee_score)
-        })
-    
-    df = pd.DataFrame(data_rows)
-    
-    # スコアを0-100の範囲に制限
-    df['relevance_score'] = df['relevance_score'].clip(0, 100)
-    df['match_percentage'] = df['match_percentage'].clip(0, 100)
-    
-    return df
-
-# ======================== 分析・診断機能（3グループ版） ========================
+# ======================== 分析・診断機能（2グループ版） ========================
 
 def analyze_classification_quality(df):
     """
-    分類品質の分析レポート生成（3グループ版）
+    分類品質の分析レポート生成（2グループ版）
     
     Args:
         df: 分類済みデータフレーム
@@ -1096,74 +929,83 @@ def analyze_classification_quality(df):
             else:
                 asin_rates[group] = 0
     
-    # Shopee特化統計
-    shopee_stats = {}
-    if has_shopee_classification:
+    # ShippingTime統計
+    shipping_stats = {}
+    if has_shopee_classification and 'ship_hours' in df.columns:
+        ship_available = len(df[df['ship_hours'].notna()])
+        shipping_stats['ship_rate'] = (ship_available / total) * 100 if total > 0 else 0
+        shipping_stats['avg_ship_hours'] = df[df['ship_hours'].notna()]['ship_hours'].mean() if ship_available > 0 else 0
+        shipping_stats['fast_shipping_count'] = len(df[df['ship_hours'] <= 24]) if ship_available > 0 else 0
+        
         if 'shopee_suitability_score' in df.columns:
-            shopee_stats['avg_shopee_score'] = df['shopee_suitability_score'].mean()
-            shopee_stats['high_score_count'] = len(df[df['shopee_suitability_score'] >= 80])
+            shipping_stats['avg_shopee_score'] = df['shopee_suitability_score'].mean()
         
         if 'is_prime' in df.columns:
-            shopee_stats['prime_rate'] = (len(df[df['is_prime']]) / total) * 100
+            shipping_stats['prime_rate'] = (len(df[df['is_prime']]) / total) * 100
         
         if 'seller_type' in df.columns:
-            shopee_stats['seller_distribution'] = df['seller_type'].value_counts().to_dict()
+            shipping_stats['seller_distribution'] = df['seller_type'].value_counts().to_dict()
     
     return {
-        "classification_type": "Shopee特化（3グループ版）" if has_shopee_classification else "従来型",
+        "classification_type": "ShippingTime最優先（2グループ版）" if has_shopee_classification else "従来型",
         "total_items": total,
         "group_distribution": group_counts.to_dict(),
         "group_percentages": {group: (count / total) * 100 for group, count in group_counts.items()},
         "relevance_stats": relevance_stats.to_dict() if len(relevance_stats) > 0 else {},
         "asin_success_rates": asin_rates,
-        "shopee_stats": shopee_stats,
-        "quality_score": calculate_quality_score_3groups(df, group_column)
+        "shipping_stats": shipping_stats,
+        "quality_score": calculate_quality_score_2groups(df, group_column)
     }
 
-def calculate_quality_score_3groups(df, group_column):
+def calculate_quality_score_2groups(df, group_column):
     """
-    3グループ版分類品質スコアの計算
+    2グループ版分類品質スコアの計算
     """
     if len(df) == 0:
         return 0
     
     if group_column == 'shopee_group':
-        # Shopee特化品質スコア（3グループ版）
+        # ShippingTime最優先品質スコア（2グループ版）
         group_a_count = len(df[df[group_column] == 'A'])
-        total_prime = len(df[df.get('is_prime', False)]) if 'is_prime' in df.columns else 0
         
-        # グループAの精密度（Prime商品がちゃんとグループAに分類されているか）
-        precision_a = (group_a_count / total_prime) if total_prime > 0 else 0
+        # ShippingTime取得率
+        ship_available = len(df[df['ship_hours'].notna()]) if 'ship_hours' in df.columns else 0
+        ship_rate = (ship_available / len(df)) if len(df) > 0 else 0
         
-        # Shopee適性スコアの平均
-        avg_shopee_score = df.get('shopee_suitability_score', pd.Series([0])).mean() / 100
+        # 24時間以内発送の精度
+        fast_shipping_accuracy = 1.0
+        if ship_available > 0:
+            group_a_with_ship = df[(df[group_column] == 'A') & (df['ship_hours'].notna())]
+            if len(group_a_with_ship) > 0:
+                fast_accurate = len(group_a_with_ship[group_a_with_ship['ship_hours'] <= 24])
+                fast_shipping_accuracy = fast_accurate / len(group_a_with_ship)
         
-        # 3グループバランス（理想的な分布）
-        group_balance = 1 - abs(0.4 - (group_a_count / len(df)))  # 理想は全体の40%程度がグループA
+        # 2グループバランス
+        group_balance = 1 - abs(0.3 - (group_a_count / len(df)))  # 理想は30%程度がグループA
         
         # 総合品質スコア
-        quality_score = (precision_a * 0.4 + avg_shopee_score * 0.4 + group_balance * 0.2) * 100
+        quality_score = (ship_rate * 0.4 + fast_shipping_accuracy * 0.4 + group_balance * 0.2) * 100
     else:
         # 従来品質スコア
         group_a_count = len(df[df[group_column] == 'A'])
         high_relevance_count = len(df[df['relevance_score'] >= 70])
         
-        # グループAの精度（高一致度商品がちゃんとグループAに分類されているか）
+        # グループAの精度
         precision_a = (group_a_count / high_relevance_count) if high_relevance_count > 0 else 0
         
         # 全体的なバランス
-        group_balance = 1 - abs(0.3 - (group_a_count / len(df)))  # 理想は全体の30%程度がグループA
+        group_balance = 1 - abs(0.3 - (group_a_count / len(df)))
         
         # 総合品質スコア
         quality_score = (precision_a * 0.7 + group_balance * 0.3) * 100
     
     return min(quality_score, 100)
 
-# ======================== 個別承認システム機能（3グループ版） ========================
+# ======================== 個別承認システム機能（2グループ版） ========================
 
 def initialize_approval_system(df):
     """
-    承認システムの初期化（3グループ版）
+    承認システムの初期化（2グループ版）
     
     Args:
         df: 分類済みデータフレーム
@@ -1194,6 +1036,7 @@ def initialize_approval_system(df):
                 'is_prime': row.get('is_prime', False),
                 'seller_name': row.get('seller_name', ''),
                 'seller_type': row.get('seller_type', ''),
+                'ship_hours': row.get('ship_hours'),
                 'status': 'pending',
                 'amazon_url': f"https://www.amazon.co.jp/dp/{row.get('amazon_asin', row.get('asin', ''))}" if row.get('amazon_asin', row.get('asin', '')) else '',
                 'original_data': row.to_dict()
@@ -1261,7 +1104,7 @@ def approve_item(approval_state, item_index, reason="", approver="システム")
 
 def reject_item(approval_state, item_index, reason="", approver="システム"):
     """
-    アイテムを却下（グループCに降格）
+    アイテムを却下
     
     Args:
         approval_state: 承認システム状態
@@ -1318,15 +1161,6 @@ def reject_item(approval_state, item_index, reason="", approver="システム"):
 def bulk_approve_items(approval_state, item_indices, reason="一括承認", approver="システム"):
     """
     複数アイテムの一括承認
-    
-    Args:
-        approval_state: 承認システム状態
-        item_indices: 承認するアイテムのインデックスリスト
-        reason: 承認理由
-        approver: 承認者名
-    
-    Returns:
-        tuple: (更新された承認状態, 成功カウント)
     """
     success_count = 0
     
@@ -1341,14 +1175,7 @@ def bulk_approve_items(approval_state, item_indices, reason="一括承認", appr
 
 def apply_approval_to_dataframe(df, approval_state):
     """
-    承認状態をデータフレームに適用（3グループ版）
-    
-    Args:
-        df: 元のデータフレーム
-        approval_state: 承認システム状態
-    
-    Returns:
-        pd.DataFrame: 承認状態が適用されたデータフレーム
+    承認状態をデータフレームに適用（2グループ版）
     """
     df_updated = df.copy()
     
@@ -1358,19 +1185,12 @@ def apply_approval_to_dataframe(df, approval_state):
         if item_index in df_updated.index:
             df_updated.at[item_index, 'shopee_group'] = 'A'
             df_updated.at[item_index, 'approval_status'] = 'approved'
-            df_updated.at[item_index, 'approval_reason'] = approved_item.get('approval_reason', '')
-            df_updated.at[item_index, 'approver'] = approved_item.get('approver', '')
-            df_updated.at[item_index, 'approval_date'] = approved_item.get('approval_date', '')
     
-    # 却下されたアイテムをグループCに降格
+    # 却下されたアイテムは除外（2グループ版では削除）
     for rejected_item in approval_state['rejected_items']:
         item_index = rejected_item['index']
         if item_index in df_updated.index:
-            df_updated.at[item_index, 'shopee_group'] = 'C'
             df_updated.at[item_index, 'approval_status'] = 'rejected'
-            df_updated.at[item_index, 'rejection_reason'] = rejected_item.get('rejection_reason', '')
-            df_updated.at[item_index, 'approver'] = rejected_item.get('approver', '')
-            df_updated.at[item_index, 'rejection_date'] = rejected_item.get('rejection_date', '')
     
     print(f"📊 承認状態適用完了: {len(approval_state['approved_items'])}件承認, {len(approval_state['rejected_items'])}件却下")
     return df_updated
@@ -1378,12 +1198,6 @@ def apply_approval_to_dataframe(df, approval_state):
 def get_approval_statistics(approval_state):
     """
     承認システムの統計情報取得
-    
-    Args:
-        approval_state: 承認システム状態
-    
-    Returns:
-        dict: 統計情報
     """
     total_items = len(approval_state['pending_items']) + len(approval_state['approved_items']) + len(approval_state['rejected_items'])
     
@@ -1413,17 +1227,6 @@ def get_approval_statistics(approval_state):
 def filter_pending_items(approval_state, filters=None):
     """
     承認待ちアイテムのフィルタリング
-    
-    Args:
-        approval_state: 承認システム状態
-        filters: フィルタ条件辞書
-            - min_shopee_score: Shopee適性スコアの最小値
-            - min_relevance_score: 一致度の最小値
-            - seller_types: 出品者タイプのリスト
-            - brands: ブランドのリスト
-    
-    Returns:
-        list: フィルタされたアイテムリスト
     """
     if filters is None:
         return approval_state['pending_items']
@@ -1441,30 +1244,13 @@ def filter_pending_items(approval_state, filters=None):
             if item.get('relevance_score', 0) < filters['min_relevance_score']:
                 continue
         
-        # 出品者タイプフィルタ
-        if 'seller_types' in filters:
-            if item.get('seller_type', '') not in filters['seller_types']:
-                continue
-        
-        # ブランドフィルタ
-        if 'brands' in filters:
-            if item.get('brand', '') not in filters['brands']:
-                continue
-        
         filtered_items.append(item)
     
-    print(f"🔍 フィルタ適用: {len(approval_state['pending_items'])}件 → {len(filtered_items)}件")
     return filtered_items
 
 def export_approval_report(approval_state):
     """
     承認レポートのエクスポート
-    
-    Args:
-        approval_state: 承認システム状態
-    
-    Returns:
-        pd.DataFrame: 承認レポート
     """
     report_data = []
     
@@ -1474,12 +1260,10 @@ def export_approval_report(approval_state):
             'ステータス': '承認済み',
             'ASIN': item['asin'],
             '商品名': item['title'],
-            'ブランド': item['brand'],
             'Shopee適性': item['shopee_score'],
             '一致度': item['relevance_score'],
-            '出品者': item['seller_name'],
+            '発送時間': item.get('ship_hours', 'N/A'),
             '承認理由': item.get('approval_reason', ''),
-            '承認者': item.get('approver', ''),
             '承認日時': item.get('approval_date', '')
         })
     
@@ -1489,12 +1273,10 @@ def export_approval_report(approval_state):
             'ステータス': '却下',
             'ASIN': item['asin'],
             '商品名': item['title'],
-            'ブランド': item['brand'],
             'Shopee適性': item['shopee_score'],
             '一致度': item['relevance_score'],
-            '出品者': item['seller_name'],
+            '発送時間': item.get('ship_hours', 'N/A'),
             '承認理由': item.get('rejection_reason', ''),
-            '承認者': item.get('approver', ''),
             '承認日時': item.get('rejection_date', '')
         })
     
@@ -1504,12 +1286,10 @@ def export_approval_report(approval_state):
             'ステータス': '承認待ち',
             'ASIN': item['asin'],
             '商品名': item['title'],
-            'ブランド': item['brand'],
             'Shopee適性': item['shopee_score'],
             '一致度': item['relevance_score'],
-            '出品者': item['seller_name'],
+            '発送時間': item.get('ship_hours', 'N/A'),
             '承認理由': '',
-            '承認者': '',
             '承認日時': ''
         })
     
@@ -1519,20 +1299,13 @@ def export_approval_report(approval_state):
 def suggest_auto_approval_candidates(approval_state, criteria=None):
     """
     自動承認候補の提案
-    
-    Args:
-        approval_state: 承認システム状態
-        criteria: 自動承認基準辞書
-    
-    Returns:
-        list: 自動承認候補アイテムリスト
     """
     if criteria is None:
-        # デフォルト基準
+        # 2グループ版デフォルト基準
         criteria = {
-            'min_shopee_score': 80,
+            'min_shopee_score': 75,
             'min_relevance_score': 60,
-            'preferred_seller_types': ['amazon', 'official_manufacturer']
+            'max_ship_hours': 24  # ShippingTime基準追加
         }
     
     candidates = []
@@ -1543,7 +1316,7 @@ def suggest_auto_approval_candidates(approval_state, criteria=None):
         reasons = []
         
         # Shopee適性スコア
-        if item.get('shopee_score', 0) >= criteria.get('min_shopee_score', 80):
+        if item.get('shopee_score', 0) >= criteria.get('min_shopee_score', 75):
             reasons.append(f"高Shopee適性({item.get('shopee_score', 0)}点)")
         else:
             meets_criteria = False
@@ -1554,9 +1327,12 @@ def suggest_auto_approval_candidates(approval_state, criteria=None):
         else:
             meets_criteria = False
         
-        # 出品者タイプ
-        if item.get('seller_type', '') in criteria.get('preferred_seller_types', []):
-            reasons.append(f"優良出品者({item.get('seller_type', '')})")
+        # ShippingTime基準（v8新機能）
+        ship_hours = item.get('ship_hours')
+        if ship_hours is not None and ship_hours <= criteria.get('max_ship_hours', 24):
+            reasons.append(f"高速発送({ship_hours}時間)")
+        elif ship_hours is None and item.get('is_prime', False):
+            reasons.append("Prime商品（発送時間不明）")
         else:
             meets_criteria = False
         
@@ -1567,87 +1343,3 @@ def suggest_auto_approval_candidates(approval_state, criteria=None):
     
     print(f"🤖 自動承認候補: {len(candidates)}件")
     return candidates
-
-# テスト関数
-def test_shopee_classification():
-    """
-    Shopee特化分類のテスト（3グループ版）
-    """
-    print("🧪 Shopee特化分類テスト開始（3グループ版）")
-    
-    # テストデータ生成
-    test_df = generate_demo_data(16)
-    
-    print(f"\n📊 テストデータ: {len(test_df)}件")
-    print("Prime+出品者分布:")
-    for _, row in test_df.iterrows():
-        print(f"  {row['clean_title'][:30]}... → Prime:{row['is_prime']}, 出品者:{row['seller_type']}, Shopee適性:{row['shopee_suitability_score']}点")
-    
-    # 分類実行
-    classified_df = classify_for_shopee_listing(test_df)
-    
-    # 分析実行
-    analysis = analyze_classification_quality(classified_df)
-    
-    print(f"\n📈 Shopee特化分類結果分析（3グループ版）:")
-    print(f"  グループA: {analysis['group_distribution'].get('A', 0)}件 ({analysis['group_percentages'].get('A', 0):.1f}%)")
-    print(f"  グループB: {analysis['group_distribution'].get('B', 0)}件 ({analysis['group_percentages'].get('B', 0):.1f}%)")
-    print(f"  グループC: {analysis['group_distribution'].get('C', 0)}件 ({analysis['group_percentages'].get('C', 0):.1f}%)")
-    print(f"  品質スコア: {analysis['quality_score']:.1f}/100")
-    
-    if 'shopee_stats' in analysis and analysis['shopee_stats']:
-        shopee_stats = analysis['shopee_stats']
-        print(f"  平均Shopee適性: {shopee_stats.get('avg_shopee_score', 0):.1f}点")
-        print(f"  Prime率: {shopee_stats.get('prime_rate', 0):.1f}%")
-        if 'seller_distribution' in shopee_stats:
-            print(f"  出品者分布: {shopee_stats['seller_distribution']}")
-    
-    print("\n✅ Shopee特化分類テスト完了（3グループ版）")
-    return classified_df, analysis
-
-def test_approval_system():
-    """
-    承認システムのテスト（3グループ版）
-    """
-    print("🧪 個別承認システムテスト開始（3グループ版）")
-    
-    # テストデータ生成
-    test_df = generate_demo_data(16)
-    classified_df = classify_for_shopee_listing(test_df)
-    
-    # 承認システム初期化
-    approval_state = initialize_approval_system(classified_df)
-    
-    print(f"\n📊 承認システム統計:")
-    stats = get_approval_statistics(approval_state)
-    for key, value in stats.items():
-        print(f"  {key}: {value}")
-    
-    # 自動承認候補
-    candidates = suggest_auto_approval_candidates(approval_state)
-    print(f"\n🤖 自動承認候補: {len(candidates)}件")
-    
-    # 1件承認テスト
-    if approval_state['pending_items']:
-        test_item = approval_state['pending_items'][0]
-        updated_state, success = approve_item(approval_state, test_item['index'], "テスト承認")
-        print(f"\n✅ テスト承認結果: {success}")
-        
-        # 承認状態をデータフレームに適用
-        final_df = apply_approval_to_dataframe(classified_df, updated_state)
-        
-        # 最終統計
-        final_stats = get_approval_statistics(updated_state)
-        print(f"\n📈 最終統計:")
-        for key, value in final_stats.items():
-            print(f"  {key}: {value}")
-    
-    print("\n✅ 個別承認システムテスト完了（3グループ版）")
-    return approval_state, classified_df
-
-if __name__ == "__main__":
-    # テスト実行
-    print("🎯 3グループ対応 Shopee特化機能統合テスト開始")
-    test_df, analysis = test_shopee_classification()
-    approval_state, test_df = test_approval_system()
-    print("\n🎯 3グループ対応 Shopee特化機能統合テスト完了")

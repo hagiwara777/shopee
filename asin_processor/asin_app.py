@@ -300,14 +300,12 @@ def classify_3_groups(df):
     
     return groups
 
-# メインタブ作成（6タブに変更）
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+# メインタブ作成（2タブに変更 - ShippingTime最優先システム v7）
+tab1, tab2, tab3, tab4 = st.tabs([
     "📊 データ管理", 
     "🏆 グループA（即座出品）", 
-    "🟡 グループB（要確認）", 
-    "🔵 グループC（検討対象）",
-    "📈 全データ・統計",
-    "🧪 分析・診断"
+    "📦 グループB（在庫管理制御）",
+    "📈 統計・分析"
 ])
 
 # データ管理タブ
@@ -434,7 +432,7 @@ with tab1:
 # グループAタブ（即座出品）
 with tab2:
     st.header("🏆 グループA（即座出品可能）")
-    st.markdown("**Prime対応 + Amazon/公式メーカー出品者**")
+    st.markdown("**24時間以内発送 - DTS規約クリア確実**")
     
     if st.session_state.processed_df is not None and st.session_state.classified_groups:
         group_a_indices = st.session_state.classified_groups.get('A', [])
@@ -484,10 +482,10 @@ with tab2:
         else:
             st.info("🏆 グループAに該当する商品はありません")
 
-# グループBタブ（要確認・個別承認システム）
+# グループBタブ（在庫管理制御）
 with tab3:
-    st.header("🟡 グループB（要確認・個別承認）")
-    st.markdown("**Prime対応 + サードパーティ出品者**")
+    st.header("📦 グループB（在庫管理制御）")
+    st.markdown("**Aの条件外は全部ここ（後の有在庫候補）**")
     
     if st.session_state.processed_df is not None and st.session_state.classified_groups:
         group_b_indices = st.session_state.classified_groups.get('B', [])
@@ -715,52 +713,10 @@ with tab3:
                     2. Amazon商品ページが右側に表示
                     3. 確認後、✅承認 または ❌却下を選択
                     """)
-        else:
-            st.info("🟡 グループBに該当する商品はありません")
-    else:
-        st.info("データを読み込んでください")
 
-# グループCタブ（検討対象）
+# 統計・分析タブ
 with tab4:
-    st.header("🔵 グループC（慎重検討）")
-    st.markdown("**非Prime商品**")
-    
-    if st.session_state.processed_df is not None and st.session_state.classified_groups:
-        group_c_indices = st.session_state.classified_groups.get('C', [])
-        if group_c_indices:
-            group_c_df = st.session_state.processed_df.iloc[group_c_indices]
-            
-            st.warning(f"⚠️ 慎重検討対象: {len(group_c_df)}件")
-            st.markdown("**注意:** これらの商品は非Prime対応のため、出品前に詳細確認が必要です。")
-            
-            # 統計表示（安全なカラム取得）
-            col1, col2, col3 = st.columns(3)
-            with col1:
-                non_prime_count = len(group_c_df[group_c_df.get('is_prime', True) == False])
-                st.metric("非Prime商品数", non_prime_count)
-            with col2:
-                avg_score = get_safe_column_mean(group_c_df, ['shopee_suitability_score', 'relevance_score'], 0)
-                st.metric("平均Shopee適性", f"{avg_score:.1f}点")
-            with col3:
-                third_party_count = len(group_c_df[group_c_df.get('seller_type', '') == 'third_party'])
-                st.metric("サードパーティ出品者", f"{third_party_count}件")
-            
-            # 詳細データ（安全なカラム表示）
-            display_columns = []
-            for col in ['clean_title', 'asin', 'amazon_asin', 'is_prime', 'seller_type', 'shopee_suitability_score']:
-                if col in group_c_df.columns:
-                    display_columns.append(col)
-            
-            if display_columns:
-                st.dataframe(group_c_df[display_columns])
-            else:
-                st.dataframe(group_c_df)
-        else:
-            st.info("🔵 グループCに該当する商品はありません")
-
-# 全データ・統計タブ
-with tab5:
-    st.header("📈 全データ・統計")
+    st.header("📈 統計・分析")
     
     if st.session_state.processed_df is not None:
         df = st.session_state.processed_df
@@ -830,7 +786,7 @@ with tab5:
         st.info("データを読み込んでください")
 
 # 分析・診断タブ
-with tab6:
+with tab4:
     st.header("🧪 分析・診断")
     
     if st.session_state.processed_df is not None:
