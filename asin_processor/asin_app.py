@@ -210,31 +210,119 @@ def export_shopee_optimized_excel(df):
 # ==========================================
 # 🔧 段階3: SP-API関連（安全なインポート）
 # ==========================================
-
 def safe_import_sp_api():
-    """SP-APIサービスの安全なインポート"""
+    """SP-APIサービスの安全なインポート（デバッグ強化版）"""
+    print("🔧 SP-API インポートデバッグ開始...")
+    
     try:
-        # 複数パスを試行
+        import pathlib
+        import sys
+        
+        # 現在のファイルパスを確認
+        current_file = pathlib.Path(__file__).resolve()
+        current_dir = current_file.parent
+        print(f"📁 現在のファイル: {current_file}")
+        print(f"📁 現在のディレクトリ: {current_dir}")
+        
+        # 試行するパス一覧
         paths_to_try = [
-            str(pathlib.Path(__file__).resolve().parent / "asin_processor" / "asin_processor"),
-            str(pathlib.Path(__file__).resolve().parent / "asin_processor"),
-            str(pathlib.Path(__file__).resolve().parent)
+            str(current_dir / "asin_processor" / "asin_processor"),
+            str(current_dir / "asin_processor"),
+            str(current_dir),
+            str(current_dir.parent / "asin_processor"),  # 追加パス
+            str(current_dir.parent),  # 追加パス
         ]
         
-        for path in paths_to_try:
+        print(f"🔍 試行するパス一覧:")
+        for i, path in enumerate(paths_to_try, 1):
+            exists = pathlib.Path(path).exists()
+            print(f"   {i}. {path} {'✅' if exists else '❌'}")
+        
+        # 各パスでインポート試行
+        for i, path in enumerate(paths_to_try, 1):
+            print(f"\n🔄 パス{i}でインポート試行: {path}")
+            
             if path not in sys.path:
                 sys.path.insert(0, path)
+                print(f"   📝 sys.pathに追加: {path}")
+            else:
+                print(f"   ✅ 既にsys.pathに存在: {path}")
             
             try:
+                # sp_api_serviceファイルの存在確認
+                sp_api_file = pathlib.Path(path) / "sp_api_service.py"
+                print(f"   📄 sp_api_service.pyファイル確認: {sp_api_file} {'✅' if sp_api_file.exists() else '❌'}")
+                
+                # インポート試行
+                import importlib
+                if 'sp_api_service' in sys.modules:
+                    print(f"   🔄 既存のsp_api_serviceモジュールをリロード")
+                    importlib.reload(sys.modules['sp_api_service'])
+                
                 import sp_api_service
-                return True, sp_api_service.process_batch_with_shopee_optimization
-            except ImportError:
+                print(f"   ✅ sp_api_serviceインポート成功!")
+                
+                # 関数の存在確認
+                if hasattr(sp_api_service, 'process_batch_with_shopee_optimization'):
+                    func = sp_api_service.process_batch_with_shopee_optimization
+                    print(f"   ✅ process_batch_with_shopee_optimization関数発見!")
+                    print(f"   📝 関数タイプ: {type(func)}")
+                    print(f"   📝 関数docstring: {func.__doc__}")
+                    
+                    # 関数が呼び出し可能かテスト
+                    if callable(func):
+                        print(f"   ✅ 関数呼び出し可能!")
+                        
+                        # 簡単なテスト呼び出し
+                        try:
+                            import pandas as pd
+                            test_df = pd.DataFrame([{'clean_title': 'test product'}])
+                            test_result = func(test_df, limit=1)
+                            print(f"   🧪 テスト呼び出し成功! 結果: {len(test_result)}行")
+                            return True, func
+                        except Exception as test_error:
+                            print(f"   ⚠️ テスト呼び出し失敗: {test_error}")
+                            return True, func  # 関数は存在するので、とりあえず成功とする
+                    else:
+                        print(f"   ❌ 関数が呼び出し不可能!")
+                        return False, None
+                else:
+                    print(f"   ❌ process_batch_with_shopee_optimization関数が見つかりません")
+                    print(f"   📋 利用可能な関数一覧:")
+                    available_functions = [name for name in dir(sp_api_service) if not name.startswith('_')]
+                    for func_name in available_functions[:15]:  # 最初の15個を表示
+                        print(f"      - {func_name}")
+                    if len(available_functions) > 15:
+                        print(f"      ... 他{len(available_functions) - 15}個")
+                    
+                    # 代替となる関数があるかチェック
+                    alternative_funcs = [name for name in available_functions if 'batch' in name.lower() or 'process' in name.lower()]
+                    if alternative_funcs:
+                        print(f"   🔍 代替候補関数:")
+                        for alt_func in alternative_funcs:
+                            print(f"      - {alt_func}")
+                    
+                    continue
+                
+            except ImportError as e:
+                print(f"   ❌ ImportError: {e}")
+                continue
+            except Exception as e:
+                print(f"   ❌ その他エラー: {e}")
+                import traceback
+                print(f"   📋 詳細トレースバック:")
+                traceback.print_exc()
                 continue
         
+        print(f"\n❌ 全てのパスでインポート失敗")
         return False, None
-    except Exception:
+        
+    except Exception as e:
+        print(f"❌ safe_import_sp_api全体エラー: {e}")
+        import traceback
+        traceback.print_exc()
         return False, None
-
+    
 def process_batch_with_shopee_optimization_fallback(df, title_column='clean_title', limit=20):
     """SP-API処理のフォールバック実装"""
     if df is None or len(df) == 0:
