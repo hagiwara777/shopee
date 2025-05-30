@@ -679,7 +679,7 @@ with tab4:
             avg_score = get_safe_column_mean(df, ['shopee_suitability_score', 'relevance_score'], 0)
             st.metric("平均Shopee適性", f"{avg_score:.1f}点")
         with col4:
-            group_a_count = len(df[df.get('shopee_group', '') == 'A'])
+            group_a_count = len(df[df['shopee_group'] == 'A']) if 'shopee_group' in df.columns else 0
             st.metric("グループA", group_a_count)
         
         # Excel出力
