@@ -1,4 +1,4 @@
-# asin_app.py - 段階的復旧版（前チャット完成状態まで復旧）
+# asin_app.py - KeyError: False 完全修正版
 import streamlit as st
 
 # ✅ 最優先: ページ設定
@@ -22,8 +22,35 @@ import pathlib
 from datetime import datetime
 
 # ==========================================
-# 🔧 段階1: 基本関数群（フォールバック実装）
+# 🔧 段階1: 基本関数群（修正版）
 # ==========================================
+
+def safe_get_column_value(df, column_name, default_value=None):
+    """DataFrameから安全に列の値を取得"""
+    if df is None or len(df) == 0:
+        return pd.Series([default_value] * (len(df) if df is not None else 1))
+    
+    if column_name in df.columns:
+        if default_value is not None:
+            return df[column_name].fillna(default_value)
+        else:
+            return df[column_name]
+    else:
+        return pd.Series([default_value] * len(df))
+
+def safe_filter_dataframe(df, column_name, condition_value, default_value=False):
+    """DataFrameから安全にフィルタリング"""
+    if df is None or len(df) == 0:
+        return df
+    
+    if column_name in df.columns:
+        return df[df[column_name] == condition_value]
+    else:
+        # 列が存在しない場合は、default_valueで比較
+        if condition_value == default_value:
+            return df  # 全ての行が条件に一致
+        else:
+            return df.iloc[0:0]  # 空のDataFrame
 
 def classify_3_groups(df):
     """DataFrameをグループA/B/Cのインデックス辞書に分類"""
@@ -32,7 +59,11 @@ def classify_3_groups(df):
         return groups
     
     for idx, row in df.iterrows():
-        group = row.get('shopee_group', 'B')
+        if 'shopee_group' in df.columns:
+            group = row['shopee_group']
+        else:
+            group = 'B'  # デフォルト
+            
         if group == 'A':
             groups['A'].append(idx)
         elif group == 'C':
@@ -100,7 +131,7 @@ def get_safe_column_mean(df, columns, default=0):
                 return float(mean_val)
     return default
 
-def get_safe_column_value(df, columns, default=0):
+def get_safe_column_value_series(df, columns, default=0):
     """指定カラムのうち存在するもののSeriesを返す"""
     if df is None or len(df) == 0:
         return pd.Series([default])
@@ -110,7 +141,7 @@ def get_safe_column_value(df, columns, default=0):
     return pd.Series([default]*len(df))
 
 # ==========================================
-# 🔧 段階2: 分類・統計関数
+# 🔧 段階2: 分類・統計関数（修正版）
 # ==========================================
 
 def classify_for_shopee_listing(df):
@@ -126,10 +157,11 @@ def classify_for_shopee_listing(df):
     
     # 🏆 ShippingTime最優先分類ロジック
     for idx, row in result_df.iterrows():
-        is_prime = row.get('is_prime', False)
-        ship_hours = row.get('ship_hours')
-        seller_type = row.get('seller_type', 'unknown')
-        seller_name = str(row.get('seller_name', ''))
+        # 安全な列アクセス
+        is_prime = row.get('is_prime', False) if 'is_prime' in result_df.columns else False
+        ship_hours = row.get('ship_hours') if 'ship_hours' in result_df.columns else None
+        seller_type = row.get('seller_type', 'unknown') if 'seller_type' in result_df.columns else 'unknown'
+        seller_name = str(row.get('seller_name', '')) if 'seller_name' in result_df.columns else ''
         
         # 🚨 推定商品を強制的にグループBに降格
         if '推定' in seller_name:
@@ -147,7 +179,7 @@ def classify_for_shopee_listing(df):
     return result_df
 
 def calculate_batch_status_shopee(df):
-    """バッチ統計計算"""
+    """バッチ統計計算（修正版）"""
     if df is None or len(df) == 0:
         return {
             'total': 0, 'group_a': 0, 'group_b': 0, 'group_c': 0,
@@ -155,10 +187,22 @@ def calculate_batch_status_shopee(df):
         }
     
     total = len(df)
-    group_a = len(df[df.get('shopee_group', '') == 'A'])
-    group_b = len(df[df.get('shopee_group', '') == 'B'])
-    group_c = len(df[df.get('shopee_group', '') == 'C'])
-    prime_count = len(df[df.get('is_prime', False) == True])
+    
+    # 安全な列アクセスでグループ数をカウント
+    if 'shopee_group' in df.columns:
+        group_a = len(df[df['shopee_group'] == 'A'])
+        group_b = len(df[df['shopee_group'] == 'B'])
+        group_c = len(df[df['shopee_group'] == 'C'])
+    else:
+        group_a = 0
+        group_b = total
+        group_c = 0
+    
+    # Prime数のカウント
+    if 'is_prime' in df.columns:
+        prime_count = len(df[df['is_prime'] == True])
+    else:
+        prime_count = 0
     
     return {
         'total': total,
@@ -504,8 +548,9 @@ if st.sidebar.button("🎯 ハイブリッド動作テスト", key="hybrid_test_
             
             if result is not None and len(result) > 0:
                 row = result.iloc[0]
-                asin = row.get('asin', 'N/A')
-                data_source = row.get('data_source', 'Unknown')
+                # 安全な列アクセス
+                asin = row.get('asin', 'N/A') if 'asin' in result.columns else 'N/A'
+                data_source = row.get('data_source', 'Unknown') if 'data_source' in result.columns else 'Unknown'
                 
                 if asin and asin != 'N/A':
                     success_count += 1
@@ -602,23 +647,35 @@ with tab2:
             
             st.success(f"🎯 即座出品可能商品: {len(group_a_df)}件")
             
-            # 統計表示
+            # 統計表示（修正版）
             col1, col2, col3 = st.columns(3)
             with col1:
-                prime_count = len(group_a_df[group_a_df.get('is_prime', False) == True])
+                # 安全なPrime数カウント
+                if 'is_prime' in group_a_df.columns:
+                    prime_count = len(group_a_df[group_a_df['is_prime'] == True])
+                else:
+                    prime_count = 0
                 st.metric("Prime商品数", prime_count)
             with col2:
                 avg_score = get_safe_column_mean(group_a_df, ['shopee_suitability_score', 'relevance_score'], 0)
                 st.metric("平均Shopee適性", f"{avg_score:.1f}点")
             with col3:
-                amazon_count = len(group_a_df[group_a_df.get('seller_type', '') == 'amazon'])
+                # 安全なAmazon出品者数カウント
+                if 'seller_type' in group_a_df.columns:
+                    amazon_count = len(group_a_df[group_a_df['seller_type'] == 'amazon'])
+                else:
+                    amazon_count = 0
                 st.metric("Amazon出品者", f"{amazon_count}件")
             
             # ASINリスト生成
             st.subheader("📋 即座出品ASIN一覧")
-            asin_col = 'asin' if 'asin' in group_a_df.columns else 'amazon_asin'
+            asin_col = None
+            for col in ['asin', 'amazon_asin']:
+                if col in group_a_df.columns:
+                    asin_col = col
+                    break
             
-            if asin_col and asin_col in group_a_df.columns:
+            if asin_col:
                 asin_list = group_a_df[asin_col].dropna().tolist()
                 if asin_list:
                     st.code('\n'.join(asin_list), language='text')
@@ -668,18 +725,27 @@ with tab4:
     if st.session_state.processed_df is not None:
         df = st.session_state.processed_df
         
-        # 全体統計
+        # 全体統計（修正版）
         col1, col2, col3, col4 = st.columns(4)
         with col1:
             st.metric("総商品数", len(df))
         with col2:
-            prime_count = len(df[df.get('is_prime', False) == True])
-            st.metric("Prime商品", f"{prime_count} ({prime_count/len(df)*100:.1f}%)")
+            # 安全なPrime数カウント
+            if 'is_prime' in df.columns:
+                prime_count = len(df[df['is_prime'] == True])
+                prime_percentage = prime_count/len(df)*100 if len(df) > 0 else 0
+                st.metric("Prime商品", f"{prime_count} ({prime_percentage:.1f}%)")
+            else:
+                st.metric("Prime商品", "0 (0.0%)")
         with col3:
             avg_score = get_safe_column_mean(df, ['shopee_suitability_score', 'relevance_score'], 0)
             st.metric("平均Shopee適性", f"{avg_score:.1f}点")
         with col4:
-            group_a_count = len(df[df['shopee_group'] == 'A']) if 'shopee_group' in df.columns else 0
+            # 安全なグループAカウント
+            if 'shopee_group' in df.columns:
+                group_a_count = len(df[df['shopee_group'] == 'A'])
+            else:
+                group_a_count = 0
             st.metric("グループA", group_a_count)
         
         # Excel出力
