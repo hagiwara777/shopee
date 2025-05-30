@@ -14,6 +14,7 @@ import streamlit as st
 import openai
 import google.generativeai as genai
 import jellyfish
+import numpy as np
 
 # .env読み込み（shopee直下の.envファイルを使用）
 current_dir = Path(__file__).parent
@@ -773,7 +774,8 @@ def classify_shipping_v8(row):
     # 最終フォールバック
     return "B", "最終フォールバック（在庫管理制御）"
 
+# asin_app.py compatible function
 def process_batch_with_shopee_optimization(df, title_column='clean_title', limit=20):
-    """asin_app.py互換のバッチ処理関数（簡易版）"""
-    print(f"🚀 実SP-API処理（互換版）: {len(df)}件中{limit}件を処理")
-    return df  # 一時的な実装
+    """Compatible batch processing function for asin_app.py"""
+    print(f"SP-API processing: {len(df)} items, limit {limit}")
+    return df  # temporary implementation
