@@ -26,7 +26,7 @@ except ImportError as e:
     sys.exit(1)
 
 try:
-    from sp_api_service import get_prime_and_seller_info, get_credentials
+    from asin_processor.asin_processor.sp_api_service import get_prime_and_seller_info, get_credentials
     print("✅ sp_api_service.py から関数をインポート成功")
 except ImportError as e:
     print(f"❌ sp_api_service.py インポートエラー: {e}")
