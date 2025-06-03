@@ -1,0 +1,77 @@
+{
+  "config_version": "4.0.1",
+  "last_updated": "2025-06-02T13:51:35.475702",
+  "last_updated_by": "UI_User",
+  "prime_thresholds": {
+    "high_confidence_threshold": 70,
+    "medium_confidence_threshold": 40,
+    "low_confidence_threshold": 25,
+    "amazon_seller_bonus": 25,
+    "official_manufacturer_bonus": 20,
+    "third_party_bonus": 15,
+    "amazon_jp_seller_bonus": 30,
+    "estimated_seller_penalty": -30,
+    "valid_seller_bonus": 10,
+    "non_prime_amazon_penalty": -25
+  },
+  "shipping_thresholds": {
+    "super_fast_hours": 12,
+    "fast_hours": 24,
+    "standard_hours": 48,
+    "slow_hours": 72,
+    "confidence_excellent": 95,
+    "confidence_high": 80,
+    "confidence_medium": 60,
+    "super_fast_bonus": 15,
+    "fast_bonus": 10,
+    "standard_bonus": 5
+  },
+  "shopee_thresholds": {
+    "group_a_threshold": 70,
+    "group_b_threshold": 50,
+    "prime_bonus": 10,
+    "amazon_seller_bonus": 8,
+    "brand_detection_bonus": 7,
+    "relevance_high_bonus": 10,
+    "relevance_medium_bonus": 5,
+    "base_score": 50
+  },
+  "relevance_thresholds": {
+    "high_relevance_threshold": 80,
+    "medium_relevance_threshold": 60,
+    "low_relevance_threshold": 30,
+    "beauty_terms_weight": 0.7,
+    "basic_match_weight": 0.3,
+    "match_excellent_threshold": 90,
+    "match_good_threshold": 70,
+    "match_fair_threshold": 50
+  },
+  "ng_word_actions": {
+    "high_risk_action": "exclude",
+    "medium_risk_action": "downgrade",
+    "low_risk_action": "warn",
+    "exclude_from_processing": true,
+    "downgrade_to_group": "C",
+    "warning_display": true
+  },
+  "classification_rules": {
+    "prime_weight": 40,
+    "shipping_weight": 30,
+    "relevance_weight": 20,
+    "brand_weight": 10,
+    "group_a_min_conditions": 2,
+    "group_b_min_conditions": 1,
+    "auto_approve_threshold": 85,
+    "manual_review_threshold": 60
+  },
+  "system_settings": {
+    "enable_fallback": true,
+    "max_retry_attempts": 2,
+    "batch_processing_limit": 100,
+    "api_timeout_seconds": 30,
+    "debug_mode": false,
+    "verbose_logging": false,
+    "performance_monitoring": true
+  },
+  "applied_preset": "balanced"
+}

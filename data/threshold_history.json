@@ -1,0 +1,1523 @@
+[
+  {
+    "timestamp": "2025-06-02T03:01:26.159519",
+    "user": "テストユーザー",
+    "changes": [
+      {
+        "type": "modified",
+        "path": "last_updated",
+        "old_value": "2025-06-02T03:01:26.157733",
+        "new_value": "2025-06-02T03:01:26.159460"
+      },
+      {
+        "type": "modified",
+        "path": "last_updated_by",
+        "old_value": "テストリセット",
+        "new_value": "テストユーザー"
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.high_confidence_threshold",
+        "old_value": 70,
+        "new_value": 80
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.medium_confidence_threshold",
+        "old_value": 40,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "shipping_thresholds.fast_hours",
+        "old_value": 24,
+        "new_value": 18
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_a_threshold",
+        "old_value": 70,
+        "new_value": 80
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_b_threshold",
+        "old_value": 50,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "classification_rules.group_a_min_conditions",
+        "old_value": 2,
+        "new_value": 3
+      },
+      {
+        "type": "added",
+        "path": "preset_name",
+        "new_value": "conservative"
+      },
+      {
+        "type": "added",
+        "path": "preset_description",
+        "new_value": "保守的設定 - 高品質商品のみを重視"
+      },
+      {
+        "type": "added",
+        "path": "applied_preset",
+        "new_value": "conservative"
+      }
+    ],
+    "old_version": "4.0.1",
+    "new_version": "4.0.1"
+  },
+  {
+    "timestamp": "2025-06-02T03:01:26.162666",
+    "user": "テストリセット",
+    "changes": [
+      {
+        "type": "modified",
+        "path": "last_updated",
+        "old_value": "2025-06-02T03:01:26.159460",
+        "new_value": "2025-06-02T03:01:26.162608"
+      },
+      {
+        "type": "modified",
+        "path": "last_updated_by",
+        "old_value": "テストユーザー",
+        "new_value": "テストリセット"
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.high_confidence_threshold",
+        "old_value": 80,
+        "new_value": 70
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.medium_confidence_threshold",
+        "old_value": 60,
+        "new_value": 40
+      },
+      {
+        "type": "modified",
+        "path": "shipping_thresholds.fast_hours",
+        "old_value": 18,
+        "new_value": 24
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_a_threshold",
+        "old_value": 80,
+        "new_value": 70
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_b_threshold",
+        "old_value": 60,
+        "new_value": 50
+      },
+      {
+        "type": "modified",
+        "path": "classification_rules.group_a_min_conditions",
+        "old_value": 3,
+        "new_value": 2
+      },
+      {
+        "type": "modified",
+        "path": "applied_preset",
+        "old_value": "conservative",
+        "new_value": "balanced"
+      },
+      {
+        "type": "removed",
+        "path": "preset_name",
+        "old_value": "conservative"
+      },
+      {
+        "type": "removed",
+        "path": "preset_description",
+        "old_value": "保守的設定 - 高品質商品のみを重視"
+      }
+    ],
+    "old_version": "4.0.1",
+    "new_version": "4.0.1"
+  },
+  {
+    "timestamp": "2025-06-02T03:59:45.299673",
+    "user": "UI_User",
+    "changes": [
+      {
+        "type": "modified",
+        "path": "last_updated",
+        "old_value": "2025-06-02T03:01:26.209384",
+        "new_value": "2025-06-02T03:59:45.299580"
+      },
+      {
+        "type": "modified",
+        "path": "last_updated_by",
+        "old_value": "履歴テストリセット",
+        "new_value": "UI_User"
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.high_confidence_threshold",
+        "old_value": 70,
+        "new_value": 80
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.medium_confidence_threshold",
+        "old_value": 40,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "shipping_thresholds.fast_hours",
+        "old_value": 24,
+        "new_value": 18
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_a_threshold",
+        "old_value": 70,
+        "new_value": 80
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_b_threshold",
+        "old_value": 50,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "classification_rules.group_a_min_conditions",
+        "old_value": 2,
+        "new_value": 3
+      },
+      {
+        "type": "added",
+        "path": "preset_name",
+        "new_value": "conservative"
+      },
+      {
+        "type": "added",
+        "path": "preset_description",
+        "new_value": "保守的設定 - 高品質商品のみを重視"
+      },
+      {
+        "type": "modified",
+        "path": "applied_preset",
+        "old_value": "balanced",
+        "new_value": "conservative"
+      }
+    ],
+    "old_version": "4.0.1",
+    "new_version": "4.0.1"
+  },
+  {
+    "timestamp": "2025-06-02T03:59:46.288983",
+    "user": "UI_User",
+    "changes": [
+      {
+        "type": "modified",
+        "path": "last_updated",
+        "old_value": "2025-06-02T03:59:45.299580",
+        "new_value": "2025-06-02T03:59:46.288925"
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.high_confidence_threshold",
+        "old_value": 80,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.medium_confidence_threshold",
+        "old_value": 60,
+        "new_value": 30
+      },
+      {
+        "type": "modified",
+        "path": "shipping_thresholds.fast_hours",
+        "old_value": 18,
+        "new_value": 36
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_a_threshold",
+        "old_value": 80,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_b_threshold",
+        "old_value": 60,
+        "new_value": 40
+      },
+      {
+        "type": "modified",
+        "path": "classification_rules.group_a_min_conditions",
+        "old_value": 3,
+        "new_value": 1
+      },
+      {
+        "type": "modified",
+        "path": "preset_name",
+        "old_value": "conservative",
+        "new_value": "aggressive"
+      },
+      {
+        "type": "modified",
+        "path": "preset_description",
+        "old_value": "保守的設定 - 高品質商品のみを重視",
+        "new_value": "攻撃的設定 - より多くの商品を対象に"
+      },
+      {
+        "type": "modified",
+        "path": "applied_preset",
+        "old_value": "conservative",
+        "new_value": "aggressive"
+      }
+    ],
+    "old_version": "4.0.1",
+    "new_version": "4.0.1"
+  },
+  {
+    "timestamp": "2025-06-02T04:08:23.586138",
+    "user": "UI_User",
+    "changes": [
+      {
+        "type": "modified",
+        "path": "last_updated",
+        "old_value": "2025-06-02T03:59:46.288925",
+        "new_value": "2025-06-02T04:08:23.585922"
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.high_confidence_threshold",
+        "old_value": 60,
+        "new_value": 80
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.medium_confidence_threshold",
+        "old_value": 30,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "shipping_thresholds.fast_hours",
+        "old_value": 36,
+        "new_value": 18
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_a_threshold",
+        "old_value": 60,
+        "new_value": 80
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_b_threshold",
+        "old_value": 40,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "classification_rules.group_a_min_conditions",
+        "old_value": 1,
+        "new_value": 3
+      },
+      {
+        "type": "modified",
+        "path": "preset_name",
+        "old_value": "aggressive",
+        "new_value": "conservative"
+      },
+      {
+        "type": "modified",
+        "path": "preset_description",
+        "old_value": "攻撃的設定 - より多くの商品を対象に",
+        "new_value": "保守的設定 - 高品質商品のみを重視"
+      },
+      {
+        "type": "modified",
+        "path": "applied_preset",
+        "old_value": "aggressive",
+        "new_value": "conservative"
+      }
+    ],
+    "old_version": "4.0.1",
+    "new_version": "4.0.1"
+  },
+  {
+    "timestamp": "2025-06-02T04:08:25.254339",
+    "user": "UI_User",
+    "changes": [
+      {
+        "type": "modified",
+        "path": "last_updated",
+        "old_value": "2025-06-02T04:08:23.585922",
+        "new_value": "2025-06-02T04:08:25.254274"
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.high_confidence_threshold",
+        "old_value": 80,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.medium_confidence_threshold",
+        "old_value": 60,
+        "new_value": 30
+      },
+      {
+        "type": "modified",
+        "path": "shipping_thresholds.fast_hours",
+        "old_value": 18,
+        "new_value": 36
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_a_threshold",
+        "old_value": 80,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_b_threshold",
+        "old_value": 60,
+        "new_value": 40
+      },
+      {
+        "type": "modified",
+        "path": "classification_rules.group_a_min_conditions",
+        "old_value": 3,
+        "new_value": 1
+      },
+      {
+        "type": "modified",
+        "path": "preset_name",
+        "old_value": "conservative",
+        "new_value": "aggressive"
+      },
+      {
+        "type": "modified",
+        "path": "preset_description",
+        "old_value": "保守的設定 - 高品質商品のみを重視",
+        "new_value": "攻撃的設定 - より多くの商品を対象に"
+      },
+      {
+        "type": "modified",
+        "path": "applied_preset",
+        "old_value": "conservative",
+        "new_value": "aggressive"
+      }
+    ],
+    "old_version": "4.0.1",
+    "new_version": "4.0.1"
+  },
+  {
+    "timestamp": "2025-06-02T10:21:42.857378",
+    "user": "UI_User",
+    "changes": [
+      {
+        "type": "modified",
+        "path": "last_updated",
+        "old_value": "2025-06-02T04:08:25.254274",
+        "new_value": "2025-06-02T10:21:42.857286"
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.high_confidence_threshold",
+        "old_value": 60,
+        "new_value": 80
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.medium_confidence_threshold",
+        "old_value": 30,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "shipping_thresholds.fast_hours",
+        "old_value": 36,
+        "new_value": 18
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_a_threshold",
+        "old_value": 60,
+        "new_value": 80
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_b_threshold",
+        "old_value": 40,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "classification_rules.group_a_min_conditions",
+        "old_value": 1,
+        "new_value": 3
+      },
+      {
+        "type": "modified",
+        "path": "preset_name",
+        "old_value": "aggressive",
+        "new_value": "conservative"
+      },
+      {
+        "type": "modified",
+        "path": "preset_description",
+        "old_value": "攻撃的設定 - より多くの商品を対象に",
+        "new_value": "保守的設定 - 高品質商品のみを重視"
+      },
+      {
+        "type": "modified",
+        "path": "applied_preset",
+        "old_value": "aggressive",
+        "new_value": "conservative"
+      }
+    ],
+    "old_version": "4.0.1",
+    "new_version": "4.0.1"
+  },
+  {
+    "timestamp": "2025-06-02T10:21:43.685789",
+    "user": "UI_User",
+    "changes": [
+      {
+        "type": "modified",
+        "path": "last_updated",
+        "old_value": "2025-06-02T10:21:42.857286",
+        "new_value": "2025-06-02T10:21:43.685731"
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.high_confidence_threshold",
+        "old_value": 80,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.medium_confidence_threshold",
+        "old_value": 60,
+        "new_value": 30
+      },
+      {
+        "type": "modified",
+        "path": "shipping_thresholds.fast_hours",
+        "old_value": 18,
+        "new_value": 36
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_a_threshold",
+        "old_value": 80,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_b_threshold",
+        "old_value": 60,
+        "new_value": 40
+      },
+      {
+        "type": "modified",
+        "path": "classification_rules.group_a_min_conditions",
+        "old_value": 3,
+        "new_value": 1
+      },
+      {
+        "type": "modified",
+        "path": "preset_name",
+        "old_value": "conservative",
+        "new_value": "aggressive"
+      },
+      {
+        "type": "modified",
+        "path": "preset_description",
+        "old_value": "保守的設定 - 高品質商品のみを重視",
+        "new_value": "攻撃的設定 - より多くの商品を対象に"
+      },
+      {
+        "type": "modified",
+        "path": "applied_preset",
+        "old_value": "conservative",
+        "new_value": "aggressive"
+      }
+    ],
+    "old_version": "4.0.1",
+    "new_version": "4.0.1"
+  },
+  {
+    "timestamp": "2025-06-02T10:22:38.592842",
+    "user": "UI_User",
+    "changes": [
+      {
+        "type": "modified",
+        "path": "last_updated",
+        "old_value": "2025-06-02T10:21:43.685731",
+        "new_value": "2025-06-02T10:22:38.592788"
+      }
+    ],
+    "old_version": "4.0.1",
+    "new_version": "4.0.1"
+  },
+  {
+    "timestamp": "2025-06-02T10:22:39.920118",
+    "user": "UI_User",
+    "changes": [
+      {
+        "type": "modified",
+        "path": "last_updated",
+        "old_value": "2025-06-02T10:22:38.592788",
+        "new_value": "2025-06-02T10:22:39.920061"
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.high_confidence_threshold",
+        "old_value": 60,
+        "new_value": 70
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.medium_confidence_threshold",
+        "old_value": 30,
+        "new_value": 40
+      },
+      {
+        "type": "modified",
+        "path": "shipping_thresholds.fast_hours",
+        "old_value": 36,
+        "new_value": 24
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_a_threshold",
+        "old_value": 60,
+        "new_value": 70
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_b_threshold",
+        "old_value": 40,
+        "new_value": 50
+      },
+      {
+        "type": "modified",
+        "path": "classification_rules.group_a_min_conditions",
+        "old_value": 1,
+        "new_value": 2
+      },
+      {
+        "type": "modified",
+        "path": "applied_preset",
+        "old_value": "aggressive",
+        "new_value": "balanced"
+      },
+      {
+        "type": "removed",
+        "path": "preset_name",
+        "old_value": "aggressive"
+      },
+      {
+        "type": "removed",
+        "path": "preset_description",
+        "old_value": "攻撃的設定 - より多くの商品を対象に"
+      }
+    ],
+    "old_version": "4.0.1",
+    "new_version": "4.0.1"
+  },
+  {
+    "timestamp": "2025-06-02T10:34:14.297499",
+    "user": "UI_User",
+    "changes": [
+      {
+        "type": "modified",
+        "path": "last_updated",
+        "old_value": "2025-06-02T10:22:39.920061",
+        "new_value": "2025-06-02T10:34:14.297347"
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.high_confidence_threshold",
+        "old_value": 70,
+        "new_value": 80
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.medium_confidence_threshold",
+        "old_value": 40,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "shipping_thresholds.fast_hours",
+        "old_value": 24,
+        "new_value": 18
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_a_threshold",
+        "old_value": 70,
+        "new_value": 80
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_b_threshold",
+        "old_value": 50,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "classification_rules.group_a_min_conditions",
+        "old_value": 2,
+        "new_value": 3
+      },
+      {
+        "type": "added",
+        "path": "preset_name",
+        "new_value": "conservative"
+      },
+      {
+        "type": "added",
+        "path": "preset_description",
+        "new_value": "保守的設定 - 高品質商品のみを重視"
+      },
+      {
+        "type": "modified",
+        "path": "applied_preset",
+        "old_value": "balanced",
+        "new_value": "conservative"
+      }
+    ],
+    "old_version": "4.0.1",
+    "new_version": "4.0.1"
+  },
+  {
+    "timestamp": "2025-06-02T10:34:14.973877",
+    "user": "UI_User",
+    "changes": [
+      {
+        "type": "modified",
+        "path": "last_updated",
+        "old_value": "2025-06-02T10:34:14.297347",
+        "new_value": "2025-06-02T10:34:14.973822"
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.high_confidence_threshold",
+        "old_value": 80,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.medium_confidence_threshold",
+        "old_value": 60,
+        "new_value": 30
+      },
+      {
+        "type": "modified",
+        "path": "shipping_thresholds.fast_hours",
+        "old_value": 18,
+        "new_value": 36
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_a_threshold",
+        "old_value": 80,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_b_threshold",
+        "old_value": 60,
+        "new_value": 40
+      },
+      {
+        "type": "modified",
+        "path": "classification_rules.group_a_min_conditions",
+        "old_value": 3,
+        "new_value": 1
+      },
+      {
+        "type": "modified",
+        "path": "preset_name",
+        "old_value": "conservative",
+        "new_value": "aggressive"
+      },
+      {
+        "type": "modified",
+        "path": "preset_description",
+        "old_value": "保守的設定 - 高品質商品のみを重視",
+        "new_value": "攻撃的設定 - より多くの商品を対象に"
+      },
+      {
+        "type": "modified",
+        "path": "applied_preset",
+        "old_value": "conservative",
+        "new_value": "aggressive"
+      }
+    ],
+    "old_version": "4.0.1",
+    "new_version": "4.0.1"
+  },
+  {
+    "timestamp": "2025-06-02T11:27:07.470955",
+    "user": "UI_User",
+    "changes": [
+      {
+        "type": "modified",
+        "path": "last_updated",
+        "old_value": "2025-06-02T10:34:14.973822",
+        "new_value": "2025-06-02T11:27:07.470874"
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.high_confidence_threshold",
+        "old_value": 60,
+        "new_value": 80
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.medium_confidence_threshold",
+        "old_value": 30,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "shipping_thresholds.fast_hours",
+        "old_value": 36,
+        "new_value": 18
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_a_threshold",
+        "old_value": 60,
+        "new_value": 80
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_b_threshold",
+        "old_value": 40,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "classification_rules.group_a_min_conditions",
+        "old_value": 1,
+        "new_value": 3
+      },
+      {
+        "type": "modified",
+        "path": "preset_name",
+        "old_value": "aggressive",
+        "new_value": "conservative"
+      },
+      {
+        "type": "modified",
+        "path": "preset_description",
+        "old_value": "攻撃的設定 - より多くの商品を対象に",
+        "new_value": "保守的設定 - 高品質商品のみを重視"
+      },
+      {
+        "type": "modified",
+        "path": "applied_preset",
+        "old_value": "aggressive",
+        "new_value": "conservative"
+      }
+    ],
+    "old_version": "4.0.1",
+    "new_version": "4.0.1"
+  },
+  {
+    "timestamp": "2025-06-02T11:27:08.230855",
+    "user": "UI_User",
+    "changes": [
+      {
+        "type": "modified",
+        "path": "last_updated",
+        "old_value": "2025-06-02T11:27:07.470874",
+        "new_value": "2025-06-02T11:27:08.230786"
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.high_confidence_threshold",
+        "old_value": 80,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.medium_confidence_threshold",
+        "old_value": 60,
+        "new_value": 30
+      },
+      {
+        "type": "modified",
+        "path": "shipping_thresholds.fast_hours",
+        "old_value": 18,
+        "new_value": 36
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_a_threshold",
+        "old_value": 80,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_b_threshold",
+        "old_value": 60,
+        "new_value": 40
+      },
+      {
+        "type": "modified",
+        "path": "classification_rules.group_a_min_conditions",
+        "old_value": 3,
+        "new_value": 1
+      },
+      {
+        "type": "modified",
+        "path": "preset_name",
+        "old_value": "conservative",
+        "new_value": "aggressive"
+      },
+      {
+        "type": "modified",
+        "path": "preset_description",
+        "old_value": "保守的設定 - 高品質商品のみを重視",
+        "new_value": "攻撃的設定 - より多くの商品を対象に"
+      },
+      {
+        "type": "modified",
+        "path": "applied_preset",
+        "old_value": "conservative",
+        "new_value": "aggressive"
+      }
+    ],
+    "old_version": "4.0.1",
+    "new_version": "4.0.1"
+  },
+  {
+    "timestamp": "2025-06-02T12:04:07.478031",
+    "user": "UI_User",
+    "changes": [
+      {
+        "type": "modified",
+        "path": "last_updated",
+        "old_value": "2025-06-02T11:27:08.230786",
+        "new_value": "2025-06-02T12:04:07.477771"
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.high_confidence_threshold",
+        "old_value": 60,
+        "new_value": 80
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.medium_confidence_threshold",
+        "old_value": 30,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "shipping_thresholds.fast_hours",
+        "old_value": 36,
+        "new_value": 18
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_a_threshold",
+        "old_value": 60,
+        "new_value": 80
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_b_threshold",
+        "old_value": 40,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "classification_rules.group_a_min_conditions",
+        "old_value": 1,
+        "new_value": 3
+      },
+      {
+        "type": "modified",
+        "path": "preset_name",
+        "old_value": "aggressive",
+        "new_value": "conservative"
+      },
+      {
+        "type": "modified",
+        "path": "preset_description",
+        "old_value": "攻撃的設定 - より多くの商品を対象に",
+        "new_value": "保守的設定 - 高品質商品のみを重視"
+      },
+      {
+        "type": "modified",
+        "path": "applied_preset",
+        "old_value": "aggressive",
+        "new_value": "conservative"
+      }
+    ],
+    "old_version": "4.0.1",
+    "new_version": "4.0.1"
+  },
+  {
+    "timestamp": "2025-06-02T12:04:08.701163",
+    "user": "UI_User",
+    "changes": [
+      {
+        "type": "modified",
+        "path": "last_updated",
+        "old_value": "2025-06-02T12:04:07.477771",
+        "new_value": "2025-06-02T12:04:08.701104"
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.high_confidence_threshold",
+        "old_value": 80,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.medium_confidence_threshold",
+        "old_value": 60,
+        "new_value": 30
+      },
+      {
+        "type": "modified",
+        "path": "shipping_thresholds.fast_hours",
+        "old_value": 18,
+        "new_value": 36
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_a_threshold",
+        "old_value": 80,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_b_threshold",
+        "old_value": 60,
+        "new_value": 40
+      },
+      {
+        "type": "modified",
+        "path": "classification_rules.group_a_min_conditions",
+        "old_value": 3,
+        "new_value": 1
+      },
+      {
+        "type": "modified",
+        "path": "preset_name",
+        "old_value": "conservative",
+        "new_value": "aggressive"
+      },
+      {
+        "type": "modified",
+        "path": "preset_description",
+        "old_value": "保守的設定 - 高品質商品のみを重視",
+        "new_value": "攻撃的設定 - より多くの商品を対象に"
+      },
+      {
+        "type": "modified",
+        "path": "applied_preset",
+        "old_value": "conservative",
+        "new_value": "aggressive"
+      }
+    ],
+    "old_version": "4.0.1",
+    "new_version": "4.0.1"
+  },
+  {
+    "timestamp": "2025-06-02T12:04:09.907027",
+    "user": "UI_User",
+    "changes": [
+      {
+        "type": "modified",
+        "path": "last_updated",
+        "old_value": "2025-06-02T12:04:08.701104",
+        "new_value": "2025-06-02T12:04:09.906967"
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.high_confidence_threshold",
+        "old_value": 60,
+        "new_value": 70
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.medium_confidence_threshold",
+        "old_value": 30,
+        "new_value": 40
+      },
+      {
+        "type": "modified",
+        "path": "shipping_thresholds.fast_hours",
+        "old_value": 36,
+        "new_value": 24
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_a_threshold",
+        "old_value": 60,
+        "new_value": 70
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_b_threshold",
+        "old_value": 40,
+        "new_value": 50
+      },
+      {
+        "type": "modified",
+        "path": "classification_rules.group_a_min_conditions",
+        "old_value": 1,
+        "new_value": 2
+      },
+      {
+        "type": "modified",
+        "path": "applied_preset",
+        "old_value": "aggressive",
+        "new_value": "balanced"
+      },
+      {
+        "type": "removed",
+        "path": "preset_name",
+        "old_value": "aggressive"
+      },
+      {
+        "type": "removed",
+        "path": "preset_description",
+        "old_value": "攻撃的設定 - より多くの商品を対象に"
+      }
+    ],
+    "old_version": "4.0.1",
+    "new_version": "4.0.1"
+  },
+  {
+    "timestamp": "2025-06-02T12:04:11.243560",
+    "user": "UI_User",
+    "changes": [
+      {
+        "type": "modified",
+        "path": "last_updated",
+        "old_value": "2025-06-02T12:04:09.906967",
+        "new_value": "2025-06-02T12:04:11.243508"
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.high_confidence_threshold",
+        "old_value": 70,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.medium_confidence_threshold",
+        "old_value": 40,
+        "new_value": 30
+      },
+      {
+        "type": "modified",
+        "path": "shipping_thresholds.fast_hours",
+        "old_value": 24,
+        "new_value": 36
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_a_threshold",
+        "old_value": 70,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_b_threshold",
+        "old_value": 50,
+        "new_value": 40
+      },
+      {
+        "type": "modified",
+        "path": "classification_rules.group_a_min_conditions",
+        "old_value": 2,
+        "new_value": 1
+      },
+      {
+        "type": "added",
+        "path": "preset_name",
+        "new_value": "aggressive"
+      },
+      {
+        "type": "added",
+        "path": "preset_description",
+        "new_value": "攻撃的設定 - より多くの商品を対象に"
+      },
+      {
+        "type": "modified",
+        "path": "applied_preset",
+        "old_value": "balanced",
+        "new_value": "aggressive"
+      }
+    ],
+    "old_version": "4.0.1",
+    "new_version": "4.0.1"
+  },
+  {
+    "timestamp": "2025-06-02T12:04:13.024143",
+    "user": "UI_User",
+    "changes": [
+      {
+        "type": "modified",
+        "path": "last_updated",
+        "old_value": "2025-06-02T12:04:11.243508",
+        "new_value": "2025-06-02T12:04:13.024069"
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.high_confidence_threshold",
+        "old_value": 60,
+        "new_value": 80
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.medium_confidence_threshold",
+        "old_value": 30,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "shipping_thresholds.fast_hours",
+        "old_value": 36,
+        "new_value": 18
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_a_threshold",
+        "old_value": 60,
+        "new_value": 80
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_b_threshold",
+        "old_value": 40,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "classification_rules.group_a_min_conditions",
+        "old_value": 1,
+        "new_value": 3
+      },
+      {
+        "type": "modified",
+        "path": "preset_name",
+        "old_value": "aggressive",
+        "new_value": "conservative"
+      },
+      {
+        "type": "modified",
+        "path": "preset_description",
+        "old_value": "攻撃的設定 - より多くの商品を対象に",
+        "new_value": "保守的設定 - 高品質商品のみを重視"
+      },
+      {
+        "type": "modified",
+        "path": "applied_preset",
+        "old_value": "aggressive",
+        "new_value": "conservative"
+      }
+    ],
+    "old_version": "4.0.1",
+    "new_version": "4.0.1"
+  },
+  {
+    "timestamp": "2025-06-02T13:51:27.608990",
+    "user": "UI_User",
+    "changes": [
+      {
+        "type": "modified",
+        "path": "last_updated",
+        "old_value": "2025-06-02T12:04:13.024069",
+        "new_value": "2025-06-02T13:51:27.608921"
+      }
+    ],
+    "old_version": "4.0.1",
+    "new_version": "4.0.1"
+  },
+  {
+    "timestamp": "2025-06-02T13:51:28.519641",
+    "user": "UI_User",
+    "changes": [
+      {
+        "type": "modified",
+        "path": "last_updated",
+        "old_value": "2025-06-02T13:51:27.608921",
+        "new_value": "2025-06-02T13:51:28.519578"
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.high_confidence_threshold",
+        "old_value": 80,
+        "new_value": 70
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.medium_confidence_threshold",
+        "old_value": 60,
+        "new_value": 40
+      },
+      {
+        "type": "modified",
+        "path": "shipping_thresholds.fast_hours",
+        "old_value": 18,
+        "new_value": 24
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_a_threshold",
+        "old_value": 80,
+        "new_value": 70
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_b_threshold",
+        "old_value": 60,
+        "new_value": 50
+      },
+      {
+        "type": "modified",
+        "path": "classification_rules.group_a_min_conditions",
+        "old_value": 3,
+        "new_value": 2
+      },
+      {
+        "type": "modified",
+        "path": "applied_preset",
+        "old_value": "conservative",
+        "new_value": "balanced"
+      },
+      {
+        "type": "removed",
+        "path": "preset_name",
+        "old_value": "conservative"
+      },
+      {
+        "type": "removed",
+        "path": "preset_description",
+        "old_value": "保守的設定 - 高品質商品のみを重視"
+      }
+    ],
+    "old_version": "4.0.1",
+    "new_version": "4.0.1"
+  },
+  {
+    "timestamp": "2025-06-02T13:51:29.337528",
+    "user": "UI_User",
+    "changes": [
+      {
+        "type": "modified",
+        "path": "last_updated",
+        "old_value": "2025-06-02T13:51:28.519578",
+        "new_value": "2025-06-02T13:51:29.337447"
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.high_confidence_threshold",
+        "old_value": 70,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.medium_confidence_threshold",
+        "old_value": 40,
+        "new_value": 30
+      },
+      {
+        "type": "modified",
+        "path": "shipping_thresholds.fast_hours",
+        "old_value": 24,
+        "new_value": 36
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_a_threshold",
+        "old_value": 70,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_b_threshold",
+        "old_value": 50,
+        "new_value": 40
+      },
+      {
+        "type": "modified",
+        "path": "classification_rules.group_a_min_conditions",
+        "old_value": 2,
+        "new_value": 1
+      },
+      {
+        "type": "added",
+        "path": "preset_name",
+        "new_value": "aggressive"
+      },
+      {
+        "type": "added",
+        "path": "preset_description",
+        "new_value": "攻撃的設定 - より多くの商品を対象に"
+      },
+      {
+        "type": "modified",
+        "path": "applied_preset",
+        "old_value": "balanced",
+        "new_value": "aggressive"
+      }
+    ],
+    "old_version": "4.0.1",
+    "new_version": "4.0.1"
+  },
+  {
+    "timestamp": "2025-06-02T13:51:32.284252",
+    "user": "UI_User",
+    "changes": [
+      {
+        "type": "modified",
+        "path": "last_updated",
+        "old_value": "2025-06-02T13:51:29.337447",
+        "new_value": "2025-06-02T13:51:32.284183"
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.high_confidence_threshold",
+        "old_value": 60,
+        "new_value": 80
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.medium_confidence_threshold",
+        "old_value": 30,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "shipping_thresholds.fast_hours",
+        "old_value": 36,
+        "new_value": 18
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_a_threshold",
+        "old_value": 60,
+        "new_value": 80
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_b_threshold",
+        "old_value": 40,
+        "new_value": 60
+      },
+      {
+        "type": "modified",
+        "path": "classification_rules.group_a_min_conditions",
+        "old_value": 1,
+        "new_value": 3
+      },
+      {
+        "type": "modified",
+        "path": "preset_name",
+        "old_value": "aggressive",
+        "new_value": "conservative"
+      },
+      {
+        "type": "modified",
+        "path": "preset_description",
+        "old_value": "攻撃的設定 - より多くの商品を対象に",
+        "new_value": "保守的設定 - 高品質商品のみを重視"
+      },
+      {
+        "type": "modified",
+        "path": "applied_preset",
+        "old_value": "aggressive",
+        "new_value": "conservative"
+      }
+    ],
+    "old_version": "4.0.1",
+    "new_version": "4.0.1"
+  },
+  {
+    "timestamp": "2025-06-02T13:51:35.475761",
+    "user": "UI_User",
+    "changes": [
+      {
+        "type": "modified",
+        "path": "last_updated",
+        "old_value": "2025-06-02T13:51:32.284183",
+        "new_value": "2025-06-02T13:51:35.475702"
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.high_confidence_threshold",
+        "old_value": 80,
+        "new_value": 70
+      },
+      {
+        "type": "modified",
+        "path": "prime_thresholds.medium_confidence_threshold",
+        "old_value": 60,
+        "new_value": 40
+      },
+      {
+        "type": "modified",
+        "path": "shipping_thresholds.fast_hours",
+        "old_value": 18,
+        "new_value": 24
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_a_threshold",
+        "old_value": 80,
+        "new_value": 70
+      },
+      {
+        "type": "modified",
+        "path": "shopee_thresholds.group_b_threshold",
+        "old_value": 60,
+        "new_value": 50
+      },
+      {
+        "type": "modified",
+        "path": "classification_rules.group_a_min_conditions",
+        "old_value": 3,
+        "new_value": 2
+      },
+      {
+        "type": "modified",
+        "path": "applied_preset",
+        "old_value": "conservative",
+        "new_value": "balanced"
+      },
+      {
+        "type": "removed",
+        "path": "preset_name",
+        "old_value": "conservative"
+      },
+      {
+        "type": "removed",
+        "path": "preset_description",
+        "old_value": "保守的設定 - 高品質商品のみを重視"
+      }
+    ],
+    "old_version": "4.0.1",
+    "new_version": "4.0.1"
+  }
+]
